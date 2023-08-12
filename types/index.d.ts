@@ -1,7 +1,7 @@
 /**
  * An extension of Map to use it as a cache.
  */
-export class CacheMap extends Map<any, any> {
+export default class CacheMap extends Map<any, any> {
     constructor();
     constructor(entries?: readonly (readonly [any, any])[]);
     constructor();
