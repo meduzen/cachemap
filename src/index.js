@@ -3,7 +3,7 @@
 /**
  * An extension of Map to use it as a cache.
  */
-export class CacheMap extends Map {
+export default class CacheMap extends Map {
 
   /**
    * Adds a cache entry if the specified key is new in the cache.
