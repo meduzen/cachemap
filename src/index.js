@@ -8,7 +8,7 @@ export default class CacheMap extends Map {
   /**
    * Adds a cache entry if the specified key is new in the cache.
    *
-   * @param {string} key
+   * @param {*} key
    * @param {*} value
    * @returns {CacheMap}
    */
@@ -20,7 +20,7 @@ export default class CacheMap extends Map {
    * The provided value can be of any type, and can also be a function that
    * will only be executed if the key is new in the cache.
    *
-   * @param {string} key
+   * @param {*} key
    * @param {*|function():*} value Value to cache or a function returning it.
    * @returns {*} Returns the (computed) `value` parameter.
    */
@@ -38,7 +38,7 @@ export default class CacheMap extends Map {
    *
    * When `value` is a function, it is only executed when the cache key is new.
    *
-   * @param {string} key
+   * @param {*} key
    * @param {*|function():(*|Promise)} value Value to cache or a (sync or async) function returning it.
    * @returns {Promise} Returns a Promise resolving with the (computed) `value` parameter.
    */
