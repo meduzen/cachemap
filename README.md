@@ -1,6 +1,8 @@
 # `CacheMap`
 
-The `CacheMap` class extends the `Map` object to use it as a key-value cache. It shines in situation where you want to cache derived state by preventing computations when the value is already known.
+The `CacheMap` class extends the `Map` object to use it as a key-value cache.
+
+It shines in situation where you want to cache derived state by preventing computations when the value is already known.
 
 [![Node.js CI](https://github.com/meduzen/cachemap/actions/workflows/node.js.yml/badge.svg)](https://github.com/meduzen/cachemap/actions/workflows/node.js.yml)
 
