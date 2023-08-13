@@ -24,11 +24,9 @@ export default class CacheMap extends Map {
    * @param {*|function():*} value Value to cache or a function returning it.
    * @returns {*} Returns the (computed) `value` parameter.
    */
-  remember = (key, value) => {
-    if (!this.has(key)) {
-      this.set(key, typeof value == 'function' ? value() : value)
-    }
+  remember = (key, value) => this
+    .add(key, typeof value == 'function' ? value() : value)
+    .get(key)
 
-    return this.get(key)
   }
 }
