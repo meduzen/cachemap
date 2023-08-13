@@ -4,9 +4,11 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## Unreleased
 
-Nothing.
+### Under the hood
 
-<!-- Compare with [last published version](https://github.com/meduzen/datetime-attribute/compare/1.3.1...main). -->
+Types: fix methods key parameter restricted to strings.
+
+Compare with [last published version](https://github.com/meduzen/cachemap/compare/v1.0.0-0...main).
 
 ## v1.0.0-0 (2023-08-13)
 
