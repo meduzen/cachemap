@@ -83,7 +83,7 @@ console.log(ranking.podium) // does not print “Extracting the podium” a seco
 // [ 651, 231, 19.8 ]
 
 ranking.add(91)
-console.log(ranking.podium) // the cache has been, so the function runs again
+console.log(ranking.podium) // the cache has been invalidated, so the function runs again
 // Extracting the podium…
 // [ 651, 231, 91 ]
 ```
