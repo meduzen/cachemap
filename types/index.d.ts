@@ -25,4 +25,19 @@ export default class CacheMap extends Map<any, any> {
      * @returns {*} Returns the (computed) `value` parameter.
      */
     remember: (key: string, value: any | (() => any)) => any;
+    /**
+     * Adds a cache entry if the key is new in the cache, then returns the value.
+     *
+     * The provided `value` can be:
+     * - **any primitive** (string, number, boolean, array, object…);
+     * - a **sync function** returning a primitive;
+     * - an **async function** resolving to a primitive (e.g.: `fetch`).
+     *
+     * When `value` is a function, it is only executed when the cache key is new.
+     *
+     * @param {string} key
+     * @param {*|function():(*|Promise)} value Value to cache or a (sync or async) function returning it.
+     * @returns {Promise} Returns a Promise resolving with the (computed) `value` parameter.
+     */
+    rememberAsync: (key: string, value: any | (() => (any | Promise<any>))) => Promise<any>;
 }

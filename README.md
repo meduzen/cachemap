@@ -2,11 +2,11 @@
 
 The `CacheMap` class extends the `Map` object to use it as a key-value cache.
 
-It shines in situation where you want to cache derived state by preventing computations when the value is already known.
+It shines in situations when you want to cache values that are derived state or that are the result of an async operation (e.g. `fetch`).
 
 [![Node.js CI](https://github.com/meduzen/cachemap/actions/workflows/node.js.yml/badge.svg)](https://github.com/meduzen/cachemap/actions/workflows/node.js.yml)
 
-The package is lightweight ([~ 0.5 KB compressed](https://bundlejs.com/?q=@frontacles/cachemap&bundle) for `import *`), tree-shakeable, typed and tested.
+The package is lightweight ([~ 0.5 KB compressed](https://bundlejs.com/?q=@frontacles/cachemap&bundle), not tree-shakeable (it’s a class!), typed and tested.
 
 ## Installation
 
@@ -22,16 +22,138 @@ import CacheMap from '@frontacles/cachemap'
 
 Not using a package manager? Download [the package files](https://github.com/meduzen/cachemap/releases) in your project and take the files in `/src`.
 
-## Usage
+## The `CacheMap` class
 
-On top of the `Map` API come two methods: `add` and `remember`.
+`CacheMap` brings some methods that can all cache values.
 
-Both are designed to create a new item in the cache, but only if the item key doesn’t already exist in the cache.
+The methods specific to `CacheMap` are all designed to create a **new item** in the cache: if the key already exists, the cache item won’t be touched.
 
-- `CacheMap.add` is like `Map.set`: it does return the CacheMap instance, for fluent usage.
-- `CacheMap.remember` returns the value from the cache if found, otherwise will add it and return it. It can accept a function as parameter: in that case, the result of the function is stored in the cache.
+If you want to **touch a cached item**, you can use the regular `Map` methods, all available in `CacheMap`, all inherited from `Map`:
+- clear the cache with [`CacheMap.clear`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/clear);
+- delete an item from the cache with [`CacheMap.delete`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/delete);
+- update the value of a cached item with [`CacheMap.set`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/set).
+
+### Overview
+
+Create a cache:
+
+```js
+import CacheMap from '@frontacles/cachemap'
+
+const cache = new CacheMap() // no parameter creates an empty cache
+
+const SuperMarioBros3Cache = new CacheMap([ // init with array of ['key', value]
+  ['key', 'value'],
+  ['country', 'Mushroom Kingdom'],
+  ['hierarchy', {
+    boss: 'Bowser',
+    chiefs: ['Lemmy', 'Iggy', 'Morton', 'Larry', 'Ludwig', 'Wendy', 'Roy'],
+    randos: ['Goomba', 'Koopa Troopa', 'Cheep cheep', 'Pirhana Plant']
+  }],
+])
+```
+
+**Add new items** in the cache, using [`CacheMap.add`](#cachemapadd):
+
+```js
+cache
+  .add('plumbers', ['Mario', 'Luigi'])
+  .add('tiny assistant', 'Toad')
+  // .clear() // uncomment this line to kill everyone
+```
+
+**Cache and return** using [`CacheMap.remember`](#cachemapremember):
+
+```js
+cache.remember('last visited level', '1-3') // 1-3
+cache.remember('last visited level', '8-2') // still returns '1-3', it was cached!
+```
+
+**Cache and return** the computed value of a function using [`CacheMap.remember`](#cachemapremember):
+
+```js
+cache.remember('bonus', () => randomFrom(['Mushroom', 'Fire flower', 'Star']))
+```
+
+**Asynchronously cache and return** (as a `Promise`) the result of an async function using [`CacheMap.rememberasync`](#cachemaprememberasync):
+
+```js
+const tinyHouse = await cache.rememberAsync('tiny house', prepareTinyHouse)
+
+async function prepareTinyHouse() {
+  return computeChestContent().then(chest => chest.toByteBuffer())
+}
+```
+
+### `CacheMap.add`
+
+`CacheMap.add` updates the cache if the key is new, and returns its `CacheMap` instance, allowing fluent usage (methods chaining).
+
+```js
+import CacheMap from '@frontacles/cachemap'
+const cache = new CacheMap()
+
+const nextFullMoonInBrussels = new Date(Date.parse('2023-08-31T03:35:00+02:00'))
+
+cache
+  .add('next full moon', nextFullMoonInBrussels)
+  .add('cloud conditions', 'hopefully decent')
+  .add('next full moon', 'yesterday') // won’t be changed, key already exists!
+
+// CacheMap(2) [Map] {
+//   'next full moon' => 2023-08-13T14:04:51.876Z,
+//   'cloud conditions' => 'hopefully decent'
+// }
+```
+
+### `CacheMap.remember`
+
+`CacheMap.remember` adds caches a value to the cache, and returns it. It takes a primitive value or a callback function, which runs to compute the value that should be stored in the cache.
+
+Like [`CacheMap.add`](#cachemapadd), it only updates the cache if the key is new. The returned value is always the cached one.
+
+```js
+const bills = [13.52, 17, 4.20, 21.6]
+
+cache.remember('money you owe me', () => sum(bills))
+
+// CacheMap(1) [Map] { 'money you owe me' => 56.32 }
+
+bills.push(25.63)
+
+cache.remember('money you owe me', () => sum(bills))
+
+// CacheMap(1) [Map] { 'money you owe me' => 56.32 }
+```
+
+### `CacheMap.rememberAsync`
+
+`CacheMap.rememberAsync` is excatly the same as [`CacheMap.remember`](#cachemapremember), except that:
+- it also accepts an async function (on top of a sync one or a primitive value);
+- it returns a `Promise` resolving into the cached value.
+
+This makes it handy for network operations like `fetch`.
+
+```js
+const todayCelsiusInParis = () => fetch('https://wttr.in/Paris?format=j1')
+  .then(response => response.json())
+  .then(({ weather }) => `${weather[0].mintempC}-${[0].maxtempC}`)
+
+const parisCelsius = await cache.rememberAsync('temperature', todayCelsiusInParis) // 17-26
+
+// CacheMap(1) [Map] { 'temperature' => '17-26' }
+
+cache.rememberAsync('rainy or not', 'you can hide').then(console.log) // 'you can hide'
+
+// CacheMap(2) [Map] {
+//   'temperature' => '17-26'
+//   'rain' => 'you can hide'
+// }
+```
 
 ## Smarter getters with `remember`
+
+@todo: show same stuff with and without `CacheMap`.
 
 Let’s take a `Ranking` class. Its constructor receives an array of scores, and from there uses getters to computes the podium 🏆 and the average scores.
 
@@ -45,19 +167,12 @@ class Ranking {
     this.#scores = scores
   }
 
-  // Push a new score.
-
-  add(score) {
-    this.#scores.push(score)
-    this.#cache.clear() // invalidate the cache, so it gets recomputed next time we access podium or average
-  }
-
   // Extract the podium.
 
   get podium() {
     return this.#cache.remember('podium', () => {
       console.log('Extracting the podium…')
-      const scores = [...this.#scores] // clone score // @todo: check better way to clone
+      const scores = structuredClone(this.#scores)
       scores.sort((a, b) => b - a)
       return scores.slice(0, 3)
     })
@@ -72,6 +187,20 @@ class Ranking {
       const sum = numbers => numbers.reduce((acc, val) => acc + val, 0)
       return sum(this.#scores) / this.#scores.length
     })
+  }
+
+  // Push a new score.
+
+  add(score) {
+    this.#scores.push(score)
+    this.#cache.clear() // invalidate the cache, so it gets recomputed next time we access podium or average
+  }
+
+  // Reset game.
+
+  newGame(scores = []) {
+    this.#scores = scores
+    this.#cache.clear()
   }
 }
 
@@ -88,11 +217,13 @@ ranking.add(91)
 console.log(ranking.podium) // the cache has been invalidated, so the function runs again
 // Extracting the podium…
 // [ 651, 231, 91 ]
+
+ranking.newGame() // reset the game
 ```
 
 ## Clear the cache
 
-You can clear the whole cache with `CacheMap.clear`, or only forget a key with `CacheMap.delete`.
+You can clear the whole cache with `CacheMap.clear`, or only forget 1 key with `CacheMap.delete`.
 
 ```js
 import CacheMap from '@frontacles/cachemap'
@@ -108,6 +239,16 @@ scores.delete('Mehdi') // [Map Iterator] { 'Elvira', 'Loulou' }
 // forget all keys
 scores.clear() // [Map Iterator] {  }
 ```
+
+## Ideas
+
+(@todo: move this to issues)
+
+- Cache with expiration.
+- IndexedDB save/load (IndexedDB is the only reliable browser storage that [can store `Map` objects](because it’s compatible with `Map` objects: https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm#javascript_types)).
+- LRU (last recently used) to delete oldest created or oldest accessed items when the cache size reaches a given limit.
+- Evaluate the need/benefits to use `WeakMap`.
+- Enrich map with convenient functions like `deleteMany`. It could be part of another class extending the base `CacheMap`. We could name it `SuperCacheMap` or `RichCacheMap` or something like this.
 
 ## Changelog
 

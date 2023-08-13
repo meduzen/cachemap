@@ -42,11 +42,9 @@ export default class CacheMap extends Map {
    * @param {*|function():(*|Promise)} value Value to cache or a (sync or async) function returning it.
    * @returns {Promise} Returns a Promise resolving with the (computed) `value` parameter.
    */
-  rememberAsync = async (key, value) => {
-    return this
-      .add(key, typeof value == 'function' ? await value() : value)
-      .get(key)
-  }
+  rememberAsync = async (key, value) => this
+    .add(key, typeof value == 'function' ? await value() : value)
+    .get(key)
 
   /**
    * Alternative `rememberAsync`: smaller, but it tests `typeof value` twice.
@@ -54,4 +52,10 @@ export default class CacheMap extends Map {
   // rememberAsync = async (key, value) => this.remember(key,
   //   typeof value == 'function' ? await value() : value
   // )
+
+  // rememberUntil = (key, value, dateOrMaxAge) => { }
+  // rememberDuring = (key, value, duration) => { }
+
+  // save = () => { }
+  // load = () => { }
 }
