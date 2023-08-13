@@ -27,5 +27,5 @@ jobs:
         run: npm ci
       - name: Test
         run: npm test
-      # - name: Use npm
-      #   run: npm run test-types
+      - name: Test types
+        run: npm run test-types
