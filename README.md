@@ -1,6 +1,6 @@
 # `CacheMap`
 
-The `CacheMap` class extends the `Map` object to use it as a cache. It prevents your code to overwrite cached values, or functions to run twice when the value is already computed.
+The `CacheMap` class extends the `Map` object to use it as a key-value cache. It prevents your code to overwrite cached values, or functions to run twice when the value is already computed.
 
 [![Node.js CI](https://github.com/meduzen/cachemap/actions/workflows/node.js.yml/badge.svg)](https://github.com/meduzen/cachemap/actions/workflows/node.js.yml)
 
@@ -22,10 +22,12 @@ Not using a package manager? Download [the package files](https://github.com/med
 
 ## Usage
 
-On top of the `Map` API come two methods:
+On top of the `Map` API come two methods: `add` and `remember`.
 
-- `CacheMap.add` is like `Map.set`, except it doesn’t update the value if the key already exists.
-- `CacheMap.remember` is similar, but for computed values.
+Both are designed to create a new item in the cache, but only if the item key doesn’t already exist in the cache.
+
+- `CacheMap.add` is like `Map.set`: it does return the CacheMap instance, for fluent usage.
+- `CacheMap.remember` returns the value from the cache if found, otherwise will add it and return it. It can accept a function as parameter: in that case, the result of the function is stored in the cache.
 
 ## Smarter getters with `remember`
 
