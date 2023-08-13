@@ -6,8 +6,8 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Under the hood
 
-- Types: fix methods key parameter restricted to strings.
-- Test typea in CI pipeline.
+- Types: fix key parameter restricted to strings in Cachemap methods.
+- Test types in CI pipeline.
 
 Compare with [last published version](https://github.com/meduzen/cachemap/compare/v1.0.0-0...main).
 
