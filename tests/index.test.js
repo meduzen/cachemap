@@ -23,7 +23,8 @@ describe('CacheMap', () => {
   })
 
   test('async remember with async handler', async () => {
-    const fetchMetadata = () => fetch('https://canistop.net/storage/metadata.json').then(response => response.json())
+    // function that emulates an async network call
+    const fetchMetadata = async () => ({ date: new Date(), things: ['thing1'] })
 
     await cache.rememberAsync('metadata', fetchMetadata)
     await cache.rememberAsync('metadata', () => ({ color: 'yellow' }))
