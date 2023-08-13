@@ -12,7 +12,7 @@ Install the package:
 
 `npm install @frontacles/cachemap`
 
-Then, import the functions you need in your script:
+Import `CacheMap` in your script:
 
 ```js
 import CacheMap from '@frontacles/cachemap'
