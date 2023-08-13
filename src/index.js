@@ -28,5 +28,30 @@ export default class CacheMap extends Map {
     .add(key, typeof value == 'function' ? value() : value)
     .get(key)
 
+  /**
+   * Adds a cache entry if the key is new in the cache, then returns the value.
+   *
+   * The provided `value` can be:
+   * - **any primitive** (string, number, boolean, array, object…);
+   * - a **sync function** returning a primitive;
+   * - an **async function** resolving to a primitive (e.g.: `fetch`).
+   *
+   * When `value` is a function, it is only executed when the cache key is new.
+   *
+   * @param {string} key
+   * @param {*|function():(*|Promise)} value Value to cache or a (sync or async) function returning it.
+   * @returns {Promise} Returns a Promise resolving with the (computed) `value` parameter.
+   */
+  rememberAsync = async (key, value) => {
+    return this
+      .add(key, typeof value == 'function' ? await value() : value)
+      .get(key)
   }
+
+  /**
+   * Alternative `rememberAsync`: smaller, but it tests `typeof value` twice.
+   */
+  // rememberAsync = async (key, value) => this.remember(key,
+  //   typeof value == 'function' ? await value() : value
+  // )
 }
