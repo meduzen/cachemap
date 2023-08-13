@@ -14,11 +14,11 @@
     "types": "tsc",
     "test": "vitest run",
     "test:ui": "vitest --ui",
-    "test-types": "pnpm exec tsd",
+    "test-types": "npm exec tsd",
     "coverage": "vitest run --coverage",
     "watch": "vitest watch",
-    "lint": "pnpm exec eslint src/**/*.js tests/index.test.js",
-    "lint-fix": "pnpm exec eslint src/**/*.js tests/index.test.js --fix"
+    "lint": "npm exec eslint src/**/*.js tests/index.test.js",
+    "lint-fix": "npm exec eslint src/**/*.js tests/index.test.js --fix"
   },
   "files": [
     "CHANGELOG.md",
