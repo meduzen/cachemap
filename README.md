@@ -2,11 +2,11 @@
 
 The `CacheMap` class extends the `Map` object to use it as a key-value cache.
 
-It shines in situations when you want to cache values that are derived state or that are the result of an async operation (e.g. `fetch`).
+It shines in situations when you want to cache derived state (values computed from others) or that are the result of async operations (e.g. `fetch`).
 
 [![Node.js CI](https://github.com/meduzen/cachemap/actions/workflows/node.js.yml/badge.svg)](https://github.com/meduzen/cachemap/actions/workflows/node.js.yml)
 
-The package is lightweight ([~ 0.5 KB compressed](https://bundlejs.com/?q=@frontacles/cachemap&bundle), not tree-shakeable (it’s a class!), typed and tested.
+The package is lightweight ([157 bytes compressed](https://bundlejs.com/?q=@frontacles/cachemap&bundle), not tree-shakeable (it’s a class!), typed and tested.
 
 It’s mostly inspired by how [Laravel `Cache::remember`](https://laravel.com/docs/10.x/cache#retrieve-store) works.
 
@@ -14,9 +14,11 @@ It’s mostly inspired by how [Laravel `Cache::remember`](https://laravel.com/do
 
 Install the package:
 
-`npm install @frontacles/cachemap`
+```sh
+npm install @frontacles/cachemap
+```
 
-Import `CacheMap` in your script:
+Import the class in your script:
 
 ```js
 import CacheMap from '@frontacles/cachemap'
