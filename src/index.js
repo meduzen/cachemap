@@ -53,7 +53,7 @@ export default class CacheMap extends Map {
   //   typeof value == 'function' ? await value() : value
   // )
 
-  // rememberUntil = (key, value, dateOrMaxAge) => { }
+  // rememberUntil = (key, value, dateOrMaxAgeOrCondition) => { }
   // rememberDuring = (key, value, duration) => { }
 
   // save = () => { }

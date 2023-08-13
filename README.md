@@ -8,6 +8,8 @@ It shines in situations when you want to cache values that are derived state or 
 
 The package is lightweight ([~ 0.5 KB compressed](https://bundlejs.com/?q=@frontacles/cachemap&bundle), not tree-shakeable (it’s a class!), typed and tested.
 
+It’s mostly inspired by how [Laravel `Cache::remember`](https://laravel.com/docs/10.x/cache#retrieve-store) works.
+
 ## Installation
 
 Install the package:
@@ -35,7 +37,7 @@ If you want to **touch a cached item**, you can use the regular `Map` methods, a
 
 ### Overview
 
-Create a cache:
+Create a cache (or many caches):
 
 ```js
 import CacheMap from '@frontacles/cachemap'
@@ -53,11 +55,13 @@ const SuperMarioBros3Cache = new CacheMap([ // init with array of ['key', value]
 ])
 ```
 
-**Add new items** in the cache, using [`CacheMap.add`](#cachemapadd):
+**Add new items** in the cache using [`CacheMap.add`](#cachemapadd):
 
 ```js
+const cache = SuperMarioBros3Cache // rename our SMB3 cache, for convenience
+
 cache
-  .add('plumbers', ['Mario', 'Luigi'])
+  .add('plumbers', ['Mario', 'Luigi']) // returns `cache`, allowing chaining
   .add('tiny assistant', 'Toad')
   // .clear() // uncomment this line to kill everyone
 ```
@@ -75,7 +79,7 @@ cache.remember('last visited level', '8-2') // still returns '1-3', it was cache
 cache.remember('bonus', () => randomFrom(['Mushroom', 'Fire flower', 'Star']))
 ```
 
-**Asynchronously cache and return** (as a `Promise`) the result of an async function using [`CacheMap.rememberasync`](#cachemaprememberasync):
+**Asynchronously cache and return** (as a `Promise`) the result of an async function using [`CacheMap.rememberAsync`](#cachemaprememberasync):
 
 ```js
 const tinyHouse = await cache.rememberAsync('tiny house', prepareTinyHouse)
@@ -108,7 +112,7 @@ cache
 
 ### `CacheMap.remember`
 
-`CacheMap.remember` adds caches a value to the cache, and returns it. It takes a primitive value or a callback function, which runs to compute the value that should be stored in the cache.
+`CacheMap.remember` adds caches a value to the cache, and returns it. It takes a primitive value or a callback function returning the value that is then stored in the cache.
 
 Like [`CacheMap.add`](#cachemapadd), it only updates the cache if the key is new. The returned value is always the cached one.
 
@@ -125,6 +129,8 @@ cache.remember('money you owe me', () => sum(bills))
 
 // CacheMap(1) [Map] { 'money you owe me' => 56.32 }
 ```
+
+On the second usage of `cache.remember` in the previous example, the function doesn’t run at all: as the key already exists in the cache, its value is immediatly returned.
 
 ### `CacheMap.rememberAsync`
 
@@ -151,11 +157,51 @@ cache.rememberAsync('rainy or not', 'you can hide').then(console.log) // 'you ca
 // }
 ```
 
-## Smarter getters with `remember`
+## Better derived states with `remember`
 
-@todo: show same stuff with and without `CacheMap`.
+[Getters](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/get) are very convenient features available in objects and classes, allowing to compute a derived value from another simply by calling a property, instead of having to manually update it with a function:
 
-Let’s take a `Ranking` class. Its constructor receives an array of scores, and from there uses getters to computes the podium 🏆 and the average scores.
+```js
+const obj = {
+  log: ['a', 'b', 'c'],
+
+  get latest() {
+    return this.log[this.log.length - 1]
+  },
+}
+
+console.log(obj.latest) // 'c'
+```
+
+Without getters, we would have need a manual operation:
+
+```js
+const obj = {
+  log: ['a', 'b', 'c'],
+
+  latest: null,
+
+  updateLatest: () => {
+    this.latest = this.log.length - 1
+  }
+}
+
+console.log(obj.latest) // null
+
+obj.updateLatest()
+console.log(obj.latest) // 'c'
+
+obj.log.push('d') // `obj.latest` is still 'c'
+
+obj.updateLatest()
+console.log(obj.latest) // 'd'
+```
+
+(Or, alternatively, work around this by having a `obj.latest()` function doing the computation on the fly, exactly like `get latest()`, but it means you then have to write `obj.latest()` instead of `obj.latest`.)
+
+Enters [`CacheMap.remember`](#cachemapremember) (and [`CacheMap.rememberAsync`](#cachemaprememberasync)) to avoid running the `get`/`latest()` computation each time we need this data.
+
+In the following example, the `Ranking` class constructor receives an array of scores, and, from there, getters are used to compute **once** the `podium` 🏆 and the `average`. New computations of the derived values are only needed after a new entry is pushed into the list of scores in `Ranking.add`.
 
 ```js
 class Ranking {
@@ -195,13 +241,6 @@ class Ranking {
     this.#scores.push(score)
     this.#cache.clear() // invalidate the cache, so it gets recomputed next time we access podium or average
   }
-
-  // Reset game.
-
-  newGame(scores = []) {
-    this.#scores = scores
-    this.#cache.clear()
-  }
 }
 
 const ranking = new Ranking([17, 9, 651, 4, 19.8, 231])
@@ -217,9 +256,9 @@ ranking.add(91)
 console.log(ranking.podium) // the cache has been invalidated, so the function runs again
 // Extracting the podium…
 // [ 651, 231, 91 ]
-
-ranking.newGame() // reset the game
 ```
+
+As you can see, computation is only done when needed. [Other example of this behaviour](https://github.com/DCMLab/reductive_analysis_app/blob/3c7a4f851c4c70ef4ea3ac8812758a89e873a65a/src/js/new/modules/Score/index.js#L36-L60).
 
 ## Clear the cache
 
@@ -245,6 +284,7 @@ scores.clear() // [Map Iterator] {  }
 (@todo: move this to issues)
 
 - Cache with expiration.
+- Cache until a condition is met (could be merged with previous: expiration).
 - IndexedDB save/load (IndexedDB is the only reliable browser storage that [can store `Map` objects](because it’s compatible with `Map` objects: https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm#javascript_types)).
 - LRU (last recently used) to delete oldest created or oldest accessed items when the cache size reaches a given limit.
 - Evaluate the need/benefits to use `WeakMap`.
