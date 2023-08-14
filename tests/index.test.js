@@ -2,9 +2,9 @@ import { beforeEach, describe, expect, test } from 'vitest'
 
 import CacheMap from '../src'
 
-const cache = new CacheMap([[3, 62]])
+let cache
 
-beforeEach(() => cache.clear()) // empty the cache
+beforeEach(() => cache = new CacheMap())
 
 describe('CacheMap extends Map', () => {
   test('a CacheMap object is an instance of Map', () => expect(cache).toBeInstanceOf(Map))
@@ -12,6 +12,12 @@ describe('CacheMap extends Map', () => {
   test('CacheMap and Map share the .clear method', () =>
     expect(CacheMap.prototype.clear == Map.prototype.clear).toBeTruthy()
   )
+})
+
+describe('CacheMap follows Map constructor signature', () => {
+  test('instantiates a CacheMap without parameter', () => expect((new CacheMap()).size).toBe(0))
+
+  test('instantiates a CacheMap with parameters', () => expect((new CacheMap([['a', 'a'], ['b', 'b']])).size).toBe(2))
 })
 
 describe('CacheMap.add', () => {
