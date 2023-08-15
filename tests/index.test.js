@@ -1,5 +1,5 @@
+import { setTimeout } from 'timers/promises'
 import { beforeEach, describe, expect, test } from 'vitest'
-
 import CacheMap from '../src'
 
 let cache
@@ -53,5 +53,22 @@ describe('CacheMap.rememberAsync', () => {
   test('caches a primitive value', async () => {
     await cache.rememberAsync('planet', 'Earth')
     expect(cache.get('planet')).toBe('Earth')
+  })
+})
+
+describe('Expiration', () => {
+  test('is set when using rememberDuring`', async () => {
+    // cache.expirable()
+
+    const drich = cache.rememberDuring('cat', 'Drich', 200)
+    const kisa = cache.rememberDuring('cat', 'Kisa', 200)
+
+    await setTimeout(201) // wait 201ms
+
+    const pitch = cache.rememberDuring('cat', 'Pitch', 200)
+
+    expect(drich).toBe('Drich')
+    expect(kisa).toBe('Drich')
+    expect(pitch).toBe('Pitch')
   })
 })

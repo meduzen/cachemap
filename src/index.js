@@ -4,6 +4,13 @@
  * An extension of Map to use it as a cache.
  */
 export default class CacheMap extends Map {
+  #metadata
+
+  withMetadata = (withMetadata = true) => {
+    if (withMetadata && !this.#metadata) {
+      this.#metadata = new Map()
+    }
+  }
 
   /**
    * Adds a cache entry if the specified key is new in the cache.
@@ -58,4 +65,40 @@ export default class CacheMap extends Map {
 
   // save = () => { }
   // load = () => { }
+
+  /**
+   * Adds a cache entry if the key is new in the cache, then returns the value.
+   *
+   * The provided `value` can be:
+   * - **any primitive** (string, number, boolean, array, object…);
+   * - a **sync function** returning a primitive.
+   *
+   * When `value` is a function, it is only executed when the cache key has not expired.
+   *
+   * @param {*} key
+   * @param {*|function():*} value Value to cache or a function returning it.
+   * @param {number|Date} expiresOn Duration after which, or moment after which the item cache should be refreshed.
+   * @returns {*} Returns the (computed) `value` parameter.
+   */
+  rememberDuring(key, value, expiresOn) {
+    this.withMetadata()
+
+    const now = new Date()
+
+    // normalize expiration to a `Date` object
+    if (typeof expiresOn == 'number') {
+      expiresOn = new Date(now.getTime() + expiresOn)
+    }
+
+    if (!this.#metadata.has(key)) {
+      this.#metadata.set(key, { expiresOn })
+    } else {
+      if (now > this.#metadata.get(key).expiresOn) {
+        this.delete(key)
+        this.#metadata.set(key, { expiresOn })
+      }
+    }
+
+    return this.remember(key, value)
+  }
 }
