@@ -57,15 +57,30 @@ describe('CacheMap.rememberAsync', () => {
 })
 
 describe('Expiration', () => {
-  test('is set when using rememberDuring`', async () => {
+  test('is set when using rememberDuring with a duration`', async () => {
     // cache.expirable()
 
-    const drich = cache.rememberDuring('cat', 'Drich', 200)
-    const kisa = cache.rememberDuring('cat', 'Kisa', 200)
+    const EXPIRE_AFTER_MS = 30
 
-    await setTimeout(201) // wait 201ms
+    const drich = cache.rememberDuring('cat', 'Drich', EXPIRE_AFTER_MS)
+    const kisa = cache.rememberDuring('cat', 'Kisa', EXPIRE_AFTER_MS)
 
-    const pitch = cache.rememberDuring('cat', 'Pitch', 200)
+    await setTimeout(EXPIRE_AFTER_MS + 1) // wait 201ms
+
+    const pitch = cache.rememberDuring('cat', 'Pitch', EXPIRE_AFTER_MS)
+
+    expect(drich).toBe('Drich')
+    expect(kisa).toBe('Drich')
+    expect(pitch).toBe('Pitch')
+  })
+
+  test('is set when using rememberDuring with a function`', () => {
+    // cache.expirable()
+
+    // Invalidate the cache if the cat name is 'Pitch'
+    const drich = cache.rememberDuring('cat', 'Drich', value => value == 'Pitch')
+    const kisa = cache.rememberDuring('cat', 'Kisa', value => value == 'Pitch')
+    const pitch = cache.rememberDuring('cat', 'Pitch', value => value == 'Pitch')
 
     expect(drich).toBe('Drich')
     expect(kisa).toBe('Drich')

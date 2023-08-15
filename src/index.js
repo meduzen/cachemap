@@ -77,25 +77,29 @@ export default class CacheMap extends Map {
    *
    * @param {*} key
    * @param {*|function():*} value Value to cache or a function returning it.
-   * @param {number|Date} expiresOn Duration after which, or moment after which the item cache should be refreshed.
+   * @param {number|Date} expiresOn Duration after which, or moment after which, or callback function deciding if the item cache should be refreshed.
    * @returns {*} Returns the (computed) `value` parameter.
    */
   rememberDuring(key, value, expiresOn) {
     this.withMetadata()
 
-    const now = new Date()
+    let isStaleItem = this.#metadata.get(key)?.isStaleItem ?? expiresOn
 
     // normalize expiration to a `Date` object
     if (typeof expiresOn == 'number') {
-      expiresOn = new Date(now.getTime() + expiresOn)
+      expiresOn = new Date(new Date().getTime() + expiresOn)
+    }
+
+    if (expiresOn instanceof Date) {
+      isStaleItem = () => new Date() > expiresOn
     }
 
     if (!this.#metadata.has(key)) {
-      this.#metadata.set(key, { expiresOn })
+      this.#metadata.set(key, { isStaleItem })
     } else {
-      if (now > this.#metadata.get(key).expiresOn) {
+      if (this.#metadata.get(key).isStaleItem(value)) {
         this.delete(key)
-        this.#metadata.set(key, { expiresOn })
+        this.#metadata.set(key, { isStaleItem })
       }
     }
 
