@@ -56,8 +56,8 @@ describe('CacheMap.rememberAsync', () => {
   })
 })
 
-describe('Expiration', () => {
-  test('is set when using rememberUntil with a duration', async () => {
+describe('CacheMap.rememberUntil', () => {
+  test('sets epxirations using rememberUntil with a duration', async () => {
     const EXPIRE_AFTER_MS = 30
 
     const drich = cache.rememberUntil('cat', 'Drich', EXPIRE_AFTER_MS)
@@ -73,7 +73,7 @@ describe('Expiration', () => {
     expect(pitch).toBe('Pitch')
   })
 
-  test('is set when using rememberUntil with a Date', async () => {
+  test('sets epxirations using rememberUntil with a Date', async () => {
     const EXPIRE_AFTER_MS = 30
     const EXPIRATION_DATE = new Date(new Date().getTime() + EXPIRE_AFTER_MS)
 
@@ -90,7 +90,7 @@ describe('Expiration', () => {
     expect(pitch).toBe('Pitch')
   })
 
-  test('is set when using rememberUntil with a function', () => {
+  test('sets epxirations using rememberUntil with a function', () => {
     const invalidateIfPitch = value => value == 'Pitch'
 
     // Invalidate the cache if the cat name is 'Pitch'
@@ -102,5 +102,53 @@ describe('Expiration', () => {
     expect(drich).toBe('Drich')
     expect(kisa).toBe('Drich')
     expect(pitch).toBe('Pitch')
+  })
+
+})
+
+describe('CacheMap.addUntil', () => {
+  test('returns its CacheMap instance', () => expect(cache.addUntil('key', 0, 1)).toBe(cache))
+
+  test('sets epxirations using addUntil with a duration', async () => {
+    const EXPIRE_AFTER_MS = 30
+
+    cache.addUntil('one', 1, EXPIRE_AFTER_MS)
+    cache.addUntil('one', 2, EXPIRE_AFTER_MS)
+    cache.addUntil('three', 2, EXPIRE_AFTER_MS)
+
+    await setTimeout(EXPIRE_AFTER_MS + 1) // wait 1ms after the expiration
+
+    cache.addUntil('three', 3, EXPIRE_AFTER_MS)
+
+    expect(cache.get('one')).toBe(1)
+    expect(cache.get('three')).toBe(3)
+  })
+
+  test('sets epxirations using addUntil with a Date', async () => {
+    const EXPIRE_AFTER_MS = 30
+    const EXPIRATION_DATE = new Date(new Date().getTime() + EXPIRE_AFTER_MS)
+
+    cache.addUntil('one', 1, EXPIRATION_DATE)
+    cache.addUntil('one', 2, EXPIRATION_DATE)
+    cache.addUntil('three', 2, EXPIRATION_DATE)
+
+    await setTimeout(EXPIRE_AFTER_MS + 1) // wait 1ms after the expiration
+
+    cache.addUntil('three', 3, EXPIRATION_DATE)
+
+    expect(cache.get('one')).toBe(1)
+    expect(cache.get('three')).toBe(3)
+  })
+
+  test('sets epxirations using addUntil with a function', async () => {
+    const invalidateIfThree = value => value == 3
+
+    cache.addUntil('one', 1, invalidateIfThree)
+    cache.addUntil('one', 2, invalidateIfThree)
+    cache.addUntil('three', 2, invalidateIfThree)
+    cache.addUntil('three', 3, invalidateIfThree)
+
+    expect(cache.get('one')).toBe(1)
+    expect(cache.get('three')).toBe(3)
   })
 })
