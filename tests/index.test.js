@@ -57,7 +57,7 @@ describe('CacheMap.rememberAsync', () => {
 })
 
 describe('Expiration', () => {
-  test('is set when using rememberDuring with a duration`', async () => {
+  test('is set when using rememberDuring with a duration', async () => {
     // cache.expirable()
 
     const EXPIRE_AFTER_MS = 30
@@ -74,7 +74,7 @@ describe('Expiration', () => {
     expect(pitch).toBe('Pitch')
   })
 
-  test('is set when using rememberDuring with a function`', () => {
+  test('is set when using rememberDuring with a function', () => {
     // cache.expirable()
 
     // Invalidate the cache if the cat name is 'Pitch'
