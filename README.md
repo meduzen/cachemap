@@ -28,18 +28,20 @@ Not using a package manager? Download [the package files](https://github.com/med
 
 ## The `CacheMap` class
 
-`CacheMap` brings some methods that can all cache values.
+`CacheMap` brings some methods that can all cache values, and optionally receive expiration conditions to control the cache lifetime.
 
-The methods specific to `CacheMap` are all designed to create a **new item** in the cache: if the key already exists, the cache item won’t be touched.
+Without conditions provided, the methods specific to `CacheMap` are all designed to create a **new item** in the cache: if the key already exists, the cache item won’t be touched.
 
-If you want to **touch a cached item**, you can use the regular `Map` methods, all available in `CacheMap`, all inherited from `Map`:
+With expiration conditions (a `Integer` duration, a `Date`, or a condition in a callback function), a cached item can be updated.
+
+In both scenario, you still have the possibility to **touch cached items** using the methods from `Map`, all inherited by `CacheMap` without being changed:
 - clear the cache with [`CacheMap.clear`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/clear);
 - delete an item from the cache with [`CacheMap.delete`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/delete);
 - update the value of a cached item with [`CacheMap.set`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/set).
 
 ### Overview
 
-Create a cache (or many caches):
+Create a cache (or many caches) by instantiating CacheMap like you would [instantiate a `Map`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/Map#parameters):
 
 ```js
 import CacheMap from '@frontacles/cachemap'
@@ -47,7 +49,6 @@ import CacheMap from '@frontacles/cachemap'
 const cache = new CacheMap() // no parameter creates an empty cache
 
 const SuperMarioBros3Cache = new CacheMap([ // init with array of ['key', value]
-  ['key', 'value'],
   ['country', 'Mushroom Kingdom'],
   ['hierarchy', {
     boss: 'Bowser',
@@ -66,6 +67,21 @@ cache
   .add('plumbers', ['Mario', 'Luigi']) // returns `cache`, allowing chaining
   .add('tiny assistant', 'Toad')
   // .clear() // uncomment this line to kill everyone
+```
+
+**Set items expiration** with a third parameter:
+
+```js
+// Duration: cache `true` during 10 ms.
+cache.add('invincibility', true, 10)
+
+// Expiration date: cache `true` until November 21, 1990.
+cache.add('best platformer', true, new Date(1990, 10, 21))
+
+// Callback: cache `15900` unless a higher score is being cached.
+cache.add('highscore', '15900', value => {
+  return value > cache.get('highscore')
+}))
 ```
 
 **Cache and return** using [`CacheMap.remember`](#cachemapremember):
@@ -93,7 +109,7 @@ async function prepareTinyHouse() {
 
 ### `CacheMap.add`
 
-`CacheMap.add` updates the cache if the key is new, and returns its `CacheMap` instance, allowing fluent usage (methods chaining).
+`CacheMap.add` adds a new cache item, and returns its `CacheMap` instance, allowing fluent usage (methods chaining).
 
 ```js
 import CacheMap from '@frontacles/cachemap'
@@ -114,7 +130,7 @@ cache
 
 ### `CacheMap.remember`
 
-`CacheMap.remember` adds caches a value to the cache, and returns it. It takes a primitive value or a callback function returning the value that is then stored in the cache.
+`CacheMap.remember` adds a value to the cache, and returns it. It takes a primitive value or a callback function returning the value that is then stored in the cache.
 
 Like [`CacheMap.add`](#cachemapadd), it only updates the cache if the key is new. The returned value is always the cached one.
 
@@ -285,8 +301,6 @@ scores.clear() // [Map Iterator] {  }
 
 (@todo: move this to issues)
 
-- Cache with expiration.
-- Cache until a condition is met (could be merged with previous: expiration).
 - IndexedDB save/load (IndexedDB is the only reliable browser storage that [can store `Map` objects](because it’s compatible with `Map` objects: https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm#javascript_types)).
 - LRU (last recently used) to delete oldest created or oldest accessed items when the cache size reaches a given limit.
 - Evaluate the need/benefits to use `WeakMap`.
