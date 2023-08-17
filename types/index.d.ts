@@ -7,13 +7,20 @@ export default class CacheMap extends Map<any, any> {
     constructor();
     constructor(iterable?: Iterable<readonly [any, any]>);
     /**
+     * Clear all metadata.
+     *
+     * @returns {null}
+     */
+    clearMetadata: () => null;
+    /**
      * Adds a cache entry if the specified key is new in the cache.
      *
      * @param {*} key
-     * @param {*} value
+     * @param {*|function():*} value Value to cache or a function returning it.
+     * @param {(number|Date|Function)=} expiresOn Duration after which, or moment after which, or callback function deciding if the item cache should be refreshed.
      * @returns {CacheMap}
      */
-    add: (key: any, value: any) => CacheMap;
+    add(key: any, value: any | (() => any), expiresOn?: (number | Date | Function) | undefined): CacheMap;
     /**
      * Adds a cache entry if the key is new in the cache, then returns the value.
      *
@@ -22,11 +29,12 @@ export default class CacheMap extends Map<any, any> {
      *
      * @param {*} key
      * @param {*|function():*} value Value to cache or a function returning it.
+     * @param {(number|Date|Function)=} expiresOn Duration after which, or moment after which, or callback function deciding if the item cache should be refreshed.
      * @returns {*} Returns the (computed) `value` parameter.
      */
-    remember: (key: any, value: any | (() => any)) => any;
+    remember: (key: any, value: any | (() => any), expiresOn?: (number | Date | Function) | undefined) => any;
     /**
-     * Adds a cache entry if the key is new in the cache, then returns the value.
+     * Adds an expirable cache entry if the key is new in the cache, then returns the value.
      *
      * The provided `value` can be:
      * - **any primitive** (string, number, boolean, array, object…);
@@ -37,7 +45,9 @@ export default class CacheMap extends Map<any, any> {
      *
      * @param {*} key
      * @param {*|function():(*|Promise)} value Value to cache or a (sync or async) function returning it.
+     * @param {(number|Date|Function)=} expiresOn Duration after which, or moment after which, or callback function deciding if the item cache should be refreshed.
      * @returns {Promise} Returns a Promise resolving with the (computed) `value` parameter.
      */
-    rememberAsync: (key: any, value: any | (() => (any | Promise<any>))) => Promise<any>;
+    rememberAsync: (key: any, value: any | (() => (any | Promise<any>)), expiresOn?: (number | Date | Function) | undefined) => Promise<any>;
+    #private;
 }

@@ -36,7 +36,7 @@ export default class CacheMap extends Map {
    *
    * @param {*} key
    * @param {*|function():*} value Value to cache or a function returning it.
-   * @param {number|Date|Function|undefined}? expiresOn Duration after which, or moment after which, or callback function deciding if the item cache should be refreshed.
+   * @param {(number|Date|Function)=} expiresOn Duration after which, or moment after which, or callback function deciding if the item cache should be refreshed.
    * @returns {CacheMap}
    */
   add(key, value, expiresOn = undefined) {
@@ -44,41 +44,43 @@ export default class CacheMap extends Map {
       return this.has(key) ? this : this.set(key, value)
     }
 
-    handleExpiration: {
-      this.#withMetadata()
+    // Handle expiration
 
-      const alreadyCached = this.#metadata.has(key)
-      const stale = alreadyCached && this.#metadata.get(key).isCacheStale(value)
+    this.#withMetadata()
 
-      if (stale) {
-        this.delete(key)
+    const alreadyCached = this.#metadata.has(key)
+    const stale = alreadyCached && this.#metadata.get(key).isCacheStale(value)
+
+    if (stale) {
+      this.delete(key)
+    }
+
+    // Create and cache the function that checks if the cached item is valid.
+
+    if (stale || !alreadyCached) {
+
+      // For convenience, assume first `expiresOn` is a function.
+
+      let isCacheStale = expiresOn
+
+      // Turn a duration (number) into an expiration `Date`.
+
+      if (typeof expiresOn == 'number') {
+        expiresOn = new Date(new Date().getTime() + expiresOn)
       }
 
-      // Create and cache the function that checks if the cached item is valid.
+      // Turn an expiration `Date` into a function comparing it to “now”.
 
-      if (stale || !alreadyCached) {
-        let isCacheStale = expiresOn // assume `expiresOn` is a function
-
-        // Turn a duration (number) into an expiration `Date`.
-
-        if (typeof expiresOn == 'number') {
-          expiresOn = new Date(new Date().getTime() + expiresOn)
-        }
-
-        // Turn an expiration `Date` into a function comparing it to “now”.
-
-        if (expiresOn instanceof Date) {
-          isCacheStale = () => new Date() > expiresOn
-        }
-
-        this.#metadata.set(key, { isCacheStale })
+      if (expiresOn instanceof Date) {
+        isCacheStale = () => new Date() > expiresOn
       }
+
+      this.#metadata.set(key, { isCacheStale })
     }
 
     return this.add(key, value)
   }
 
-  /*
   /**
    * Adds a cache entry if the key is new in the cache, then returns the value.
    *
@@ -87,7 +89,7 @@ export default class CacheMap extends Map {
    *
    * @param {*} key
    * @param {*|function():*} value Value to cache or a function returning it.
-   * @param {number|Date|Function|undefined}? expiresOn Duration after which, or moment after which, or callback function deciding if the item cache should be refreshed.
+   * @param {(number|Date|Function)=} expiresOn Duration after which, or moment after which, or callback function deciding if the item cache should be refreshed.
    * @returns {*} Returns the (computed) `value` parameter.
    */
   remember = (key, value, expiresOn = undefined) => this
@@ -106,18 +108,12 @@ export default class CacheMap extends Map {
    *
    * @param {*} key
    * @param {*|function():(*|Promise)} value Value to cache or a (sync or async) function returning it.
+   * @param {(number|Date|Function)=} expiresOn Duration after which, or moment after which, or callback function deciding if the item cache should be refreshed.
    * @returns {Promise} Returns a Promise resolving with the (computed) `value` parameter.
    */
   rememberAsync = async (key, value, expiresOn = undefined) => this
     .add(key, typeof value == 'function' ? await value() : value, expiresOn)
     .get(key)
-
-  /**
-   * Alternative `rememberAsync`: smaller, but it tests `typeof value` twice.
-   */
-  // rememberAsync = async (key, value) => this.remember(key,
-  //   typeof value == 'function' ? await value() : value
-  // )
 
   // save = () => { }
   // load = () => { }
