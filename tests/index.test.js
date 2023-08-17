@@ -57,15 +57,15 @@ describe('CacheMap.rememberAsync', () => {
 })
 
 describe('Expiration', () => {
-  test('is set when using rememberDuring with a duration', async () => {
+  test('is set when using rememberUntil with a duration', async () => {
     const EXPIRE_AFTER_MS = 30
 
-    const drich = cache.rememberDuring('cat', 'Drich', EXPIRE_AFTER_MS)
-    const kisa = cache.rememberDuring('cat', 'Kisa', EXPIRE_AFTER_MS)
+    const drich = cache.rememberUntil('cat', 'Drich', EXPIRE_AFTER_MS)
+    const kisa = cache.rememberUntil('cat', 'Kisa', EXPIRE_AFTER_MS)
 
     await setTimeout(EXPIRE_AFTER_MS + 1) // wait 1ms after the expiration
 
-    const pitch = cache.rememberDuring('cat', 'Pitch', EXPIRE_AFTER_MS)
+    const pitch = cache.rememberUntil('cat', 'Pitch', EXPIRE_AFTER_MS)
 
     expect(EXPIRE_AFTER_MS).toBeTypeOf('number')
     expect(drich).toBe('Drich')
@@ -73,16 +73,16 @@ describe('Expiration', () => {
     expect(pitch).toBe('Pitch')
   })
 
-  test('is set when using rememberDuring with a Date', async () => {
+  test('is set when using rememberUntil with a Date', async () => {
     const EXPIRE_AFTER_MS = 30
     const EXPIRATION_DATE = new Date(new Date().getTime() + EXPIRE_AFTER_MS)
 
-    const drich = cache.rememberDuring('cat', 'Drich', EXPIRATION_DATE)
-    const kisa = cache.rememberDuring('cat', 'Kisa', EXPIRATION_DATE)
+    const drich = cache.rememberUntil('cat', 'Drich', EXPIRATION_DATE)
+    const kisa = cache.rememberUntil('cat', 'Kisa', EXPIRATION_DATE)
 
     await setTimeout(EXPIRE_AFTER_MS + 1) // wait 1ms after the expiration
 
-    const pitch = cache.rememberDuring('cat', 'Pitch', EXPIRATION_DATE)
+    const pitch = cache.rememberUntil('cat', 'Pitch', EXPIRATION_DATE)
 
     expect(EXPIRATION_DATE).toBeInstanceOf(Date)
     expect(drich).toBe('Drich')
@@ -90,13 +90,13 @@ describe('Expiration', () => {
     expect(pitch).toBe('Pitch')
   })
 
-  test('is set when using rememberDuring with a function', () => {
+  test('is set when using rememberUntil with a function', () => {
     const invalidateIfPitch = value => value == 'Pitch'
 
     // Invalidate the cache if the cat name is 'Pitch'
-    const drich = cache.rememberDuring('cat', 'Drich', invalidateIfPitch)
-    const kisa = cache.rememberDuring('cat', 'Kisa', invalidateIfPitch)
-    const pitch = cache.rememberDuring('cat', 'Pitch', invalidateIfPitch)
+    const drich = cache.rememberUntil('cat', 'Drich', invalidateIfPitch)
+    const kisa = cache.rememberUntil('cat', 'Kisa', invalidateIfPitch)
+    const pitch = cache.rememberUntil('cat', 'Pitch', invalidateIfPitch)
 
     expect(invalidateIfPitch).toBeTypeOf('function')
     expect(drich).toBe('Drich')

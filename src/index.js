@@ -79,12 +79,6 @@ export default class CacheMap extends Map {
   //   typeof value == 'function' ? await value() : value
   // )
 
-  // rememberUntil = (key, value, dateOrMaxAgeOrCondition) => { }
-  // rememberDuring = (key, value, duration) => { }
-
-  // save = () => { }
-  // load = () => { }
-
   /**
    * Adds a cache entry if the key is new in the cache, then returns the value.
    *
@@ -99,7 +93,7 @@ export default class CacheMap extends Map {
    * @param {number|Date|Function} expiresOn Duration after which, or moment after which, or callback function deciding if the item cache should be refreshed.
    * @returns {*} Returns the (computed) `value` parameter.
    */
-  rememberDuring(key, value, expiresOn) {
+  rememberUntil(key, value, expiresOn) {
     this.#withMetadata()
 
     const alreadyCached = this.#metadata.has(key)
@@ -131,4 +125,7 @@ export default class CacheMap extends Map {
 
     return this.remember(key, value)
   }
+
+  // save = () => { }
+  // load = () => { }
 }
