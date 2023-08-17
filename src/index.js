@@ -35,58 +35,50 @@ export default class CacheMap extends Map {
    * Adds a cache entry if the specified key is new in the cache.
    *
    * @param {*} key
-   * @param {*} value
-   * @returns {CacheMap}
-   */
-  add = (key, value) => this.has(key) ? this : this.set(key, value)
-
-  /**
-   * Adds an expirable cache entry if the specified key is new in the cache.
-   *
-   * The provided `value` can be:
-   * - **any primitive** (string, number, boolean, array, object…);
-   * - a **sync function** returning a primitive.
-   *
-   * When `value` is a function, it is only executed when the cache key has not expired.
-   *
-   * @param {*} key
    * @param {*|function():*} value Value to cache or a function returning it.
-   * @param {number|Date|Function} expiresOn Duration after which, or moment after which, or callback function deciding if the item cache should be refreshed.
+   * @param {number|Date|Function|undefined}? expiresOn Duration after which, or moment after which, or callback function deciding if the item cache should be refreshed.
    * @returns {CacheMap}
    */
-  addUntil(key, value, expiresOn) {
-    this.#withMetadata()
-
-    const alreadyCached = this.#metadata.has(key)
-    const stale = alreadyCached && this.#metadata.get(key).isCacheStale(value)
-
-    if (stale) {
-      this.delete(key)
+  add(key, value, expiresOn = undefined) {
+    if (!expiresOn) {
+      return this.has(key) ? this : this.set(key, value)
     }
 
-    // Create and cache the function that checks if the cached item is valid.
+    handleExpiration: {
+      this.#withMetadata()
 
-    if (stale || !alreadyCached) {
-      let isCacheStale = expiresOn // assume `expiresOn` is a function
+      const alreadyCached = this.#metadata.has(key)
+      const stale = alreadyCached && this.#metadata.get(key).isCacheStale(value)
 
-      // Turn a duration (number) into an expiration `Date`.
-
-      if (typeof expiresOn == 'number') {
-        expiresOn = new Date(new Date().getTime() + expiresOn)
+      if (stale) {
+        this.delete(key)
       }
 
-      // Turn an expiration `Date` into a function comparing it to “now”.
+      // Create and cache the function that checks if the cached item is valid.
 
-      if (expiresOn instanceof Date) {
-        isCacheStale = () => new Date() > expiresOn
+      if (stale || !alreadyCached) {
+        let isCacheStale = expiresOn // assume `expiresOn` is a function
+
+        // Turn a duration (number) into an expiration `Date`.
+
+        if (typeof expiresOn == 'number') {
+          expiresOn = new Date(new Date().getTime() + expiresOn)
+        }
+
+        // Turn an expiration `Date` into a function comparing it to “now”.
+
+        if (expiresOn instanceof Date) {
+          isCacheStale = () => new Date() > expiresOn
+        }
+
+        this.#metadata.set(key, { isCacheStale })
       }
-
-      this.#metadata.set(key, { isCacheStale })
     }
 
     return this.add(key, value)
   }
 
+  /*
   /**
    * Adds a cache entry if the key is new in the cache, then returns the value.
    *
@@ -95,10 +87,11 @@ export default class CacheMap extends Map {
    *
    * @param {*} key
    * @param {*|function():*} value Value to cache or a function returning it.
+   * @param {number|Date|Function|undefined}? expiresOn Duration after which, or moment after which, or callback function deciding if the item cache should be refreshed.
    * @returns {*} Returns the (computed) `value` parameter.
    */
-  remember = (key, value) => this
-    .add(key, typeof value == 'function' ? value() : value)
+  remember = (key, value, expiresOn = undefined) => this
+    .add(key, typeof value == 'function' ? value() : value, expiresOn)
     .get(key)
 
   /**
@@ -115,8 +108,8 @@ export default class CacheMap extends Map {
    * @param {*|function():(*|Promise)} value Value to cache or a (sync or async) function returning it.
    * @returns {Promise} Returns a Promise resolving with the (computed) `value` parameter.
    */
-  rememberAsync = async (key, value) => this
-    .add(key, typeof value == 'function' ? await value() : value)
+  rememberAsync = async (key, value, expiresOn = undefined) => this
+    .add(key, typeof value == 'function' ? await value() : value, expiresOn)
     .get(key)
 
   /**
@@ -126,42 +119,6 @@ export default class CacheMap extends Map {
   //   typeof value == 'function' ? await value() : value
   // )
 
-  /**
-   * Adds an expirable cache entry if the key is new in the cache, then returns the value.
-   *
-   * The provided `value` can be:
-   * - **any primitive** (string, number, boolean, array, object…);
-   * - a **sync function** returning a primitive.
-   *
-   * When `value` is a function, it is only executed when the cache key has not expired.
-   *
-   * @param {*} key
-   * @param {*|function():*} value Value to cache or a function returning it.
-   * @param {number|Date|Function} expiresOn Duration after which, or moment after which, or callback function deciding if the item cache should be refreshed.
-   * @returns {*} Returns the (computed) `value` parameter.
-   */
-  rememberUntil = (key, value, expiresOn) =>
-    this
-      .addUntil(key, typeof value == 'function' ? value() : value, expiresOn)
-      .get(key)
-
   // save = () => { }
   // load = () => { }
-
-  /**
-   * Adds an expirable cache entry if the key is new in the cache, then returns the value.
-   *
-   * The provided `value` can be:
-   * - **any primitive** (string, number, boolean, array, object…);
-   * - a **sync function** returning a primitive.
-   *
-   * When `value` is a function, it is only executed when the cache key has not expired.
-   *
-   * @param {*} key
-   * @param {*|function():*} value Value to cache or a function returning it.
-   * @param {number|Date|Function} expiresOn Duration after which, or moment after which, or callback function deciding if the item cache should be refreshed.
-   * @param {number|Date|Function} expiresOn Duration after which, or moment after which, or callback function deciding if the item cache should be refreshed.
-   * @returns {Promise} Returns a Promise resolving with the (computed) `value` parameter.
-   */
-  rememberAsyncUntil = async (key, value, expiresOn) => this.rememberUntil(key, typeof value == 'function' ? await value() : value, expiresOn)
 }

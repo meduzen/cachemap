@@ -56,16 +56,16 @@ describe('CacheMap.rememberAsync', () => {
   })
 })
 
-describe('CacheMap.rememberUntil', () => {
-  test('sets epxirations using rememberUntil with a duration', async () => {
+describe('CacheMap.remember', () => {
+  test('sets epxirations using remember with a duration', async () => {
     const EXPIRE_AFTER_MS = 30
 
-    const drich = cache.rememberUntil('cat', 'Drich', EXPIRE_AFTER_MS)
-    const kisa = cache.rememberUntil('cat', 'Kisa', EXPIRE_AFTER_MS)
+    const drich = cache.remember('cat', 'Drich', EXPIRE_AFTER_MS)
+    const kisa = cache.remember('cat', 'Kisa', EXPIRE_AFTER_MS)
 
     await setTimeout(EXPIRE_AFTER_MS + 1) // wait 1ms after the expiration
 
-    const pitch = cache.rememberUntil('cat', 'Pitch', EXPIRE_AFTER_MS)
+    const pitch = cache.remember('cat', 'Pitch', EXPIRE_AFTER_MS)
 
     expect(EXPIRE_AFTER_MS).toBeTypeOf('number')
     expect(drich).toBe('Drich')
@@ -73,16 +73,16 @@ describe('CacheMap.rememberUntil', () => {
     expect(pitch).toBe('Pitch')
   })
 
-  test('sets epxirations using rememberUntil with a Date', async () => {
+  test('sets epxirations using remember with a Date', async () => {
     const EXPIRE_AFTER_MS = 30
     const EXPIRATION_DATE = new Date(new Date().getTime() + EXPIRE_AFTER_MS)
 
-    const drich = cache.rememberUntil('cat', 'Drich', EXPIRATION_DATE)
-    const kisa = cache.rememberUntil('cat', 'Kisa', EXPIRATION_DATE)
+    const drich = cache.remember('cat', 'Drich', EXPIRATION_DATE)
+    const kisa = cache.remember('cat', 'Kisa', EXPIRATION_DATE)
 
     await setTimeout(EXPIRE_AFTER_MS + 1) // wait 1ms after the expiration
 
-    const pitch = cache.rememberUntil('cat', 'Pitch', EXPIRATION_DATE)
+    const pitch = cache.remember('cat', 'Pitch', EXPIRATION_DATE)
 
     expect(EXPIRATION_DATE).toBeInstanceOf(Date)
     expect(drich).toBe('Drich')
@@ -90,13 +90,13 @@ describe('CacheMap.rememberUntil', () => {
     expect(pitch).toBe('Pitch')
   })
 
-  test('sets epxirations using rememberUntil with a function', () => {
+  test('sets epxirations using remember with a function', () => {
     const invalidateIfPitch = value => value == 'Pitch'
 
     // Invalidate the cache if the cat name is 'Pitch'
-    const drich = cache.rememberUntil('cat', 'Drich', invalidateIfPitch)
-    const kisa = cache.rememberUntil('cat', 'Kisa', invalidateIfPitch)
-    const pitch = cache.rememberUntil('cat', 'Pitch', invalidateIfPitch)
+    const drich = cache.remember('cat', 'Drich', invalidateIfPitch)
+    const kisa = cache.remember('cat', 'Kisa', invalidateIfPitch)
+    const pitch = cache.remember('cat', 'Pitch', invalidateIfPitch)
 
     expect(invalidateIfPitch).toBeTypeOf('function')
     expect(drich).toBe('Drich')
@@ -106,47 +106,47 @@ describe('CacheMap.rememberUntil', () => {
 
 })
 
-describe('CacheMap.addUntil', () => {
-  test('returns its CacheMap instance', () => expect(cache.addUntil('key', 0, 1)).toBe(cache))
+describe('CacheMap.add', () => {
+  test('returns its CacheMap instance', () => expect(cache.add('key', 0, 1)).toBe(cache))
 
-  test('sets epxirations using addUntil with a duration', async () => {
+  test('sets epxirations using add with a duration', async () => {
     const EXPIRE_AFTER_MS = 30
 
-    cache.addUntil('one', 1, EXPIRE_AFTER_MS)
-    cache.addUntil('one', 2, EXPIRE_AFTER_MS)
-    cache.addUntil('three', 2, EXPIRE_AFTER_MS)
+    cache.add('one', 1, EXPIRE_AFTER_MS)
+    cache.add('one', 2, EXPIRE_AFTER_MS)
+    cache.add('three', 2, EXPIRE_AFTER_MS)
 
     await setTimeout(EXPIRE_AFTER_MS + 1) // wait 1ms after the expiration
 
-    cache.addUntil('three', 3, EXPIRE_AFTER_MS)
+    cache.add('three', 3, EXPIRE_AFTER_MS)
 
     expect(cache.get('one')).toBe(1)
     expect(cache.get('three')).toBe(3)
   })
 
-  test('sets epxirations using addUntil with a Date', async () => {
+  test('sets epxirations using add with a Date', async () => {
     const EXPIRE_AFTER_MS = 30
     const EXPIRATION_DATE = new Date(new Date().getTime() + EXPIRE_AFTER_MS)
 
-    cache.addUntil('one', 1, EXPIRATION_DATE)
-    cache.addUntil('one', 2, EXPIRATION_DATE)
-    cache.addUntil('three', 2, EXPIRATION_DATE)
+    cache.add('one', 1, EXPIRATION_DATE)
+    cache.add('one', 2, EXPIRATION_DATE)
+    cache.add('three', 2, EXPIRATION_DATE)
 
     await setTimeout(EXPIRE_AFTER_MS + 1) // wait 1ms after the expiration
 
-    cache.addUntil('three', 3, EXPIRATION_DATE)
+    cache.add('three', 3, EXPIRATION_DATE)
 
     expect(cache.get('one')).toBe(1)
     expect(cache.get('three')).toBe(3)
   })
 
-  test('sets epxirations using addUntil with a function', async () => {
+  test('sets epxirations using add with a function', async () => {
     const invalidateIfThree = value => value == 3
 
-    cache.addUntil('one', 1, invalidateIfThree)
-    cache.addUntil('one', 2, invalidateIfThree)
-    cache.addUntil('three', 2, invalidateIfThree)
-    cache.addUntil('three', 3, invalidateIfThree)
+    cache.add('one', 1, invalidateIfThree)
+    cache.add('one', 2, invalidateIfThree)
+    cache.add('three', 2, invalidateIfThree)
+    cache.add('three', 3, invalidateIfThree)
 
     expect(cache.get('one')).toBe(1)
     expect(cache.get('three')).toBe(3)
@@ -154,16 +154,16 @@ describe('CacheMap.addUntil', () => {
 
 })
 
-describe('CacheMap.rememberAsyncUntil', () => {
+describe('CacheMap.rememberAsync', () => {
   test('caches the result of an async handler with a duration', async () => {
     const EXPIRE_AFTER_MS = 30
 
     // function emulating an async network call
     const fetchMetadata = async () => ({ date: new Date(), things: ['thing1'] })
 
-    await cache.rememberAsyncUntil('metadata', fetchMetadata, EXPIRE_AFTER_MS)
+    await cache.rememberAsync('metadata', fetchMetadata, EXPIRE_AFTER_MS)
     await setTimeout(EXPIRE_AFTER_MS + 1) // wait 1ms after the expiration
-    await cache.rememberAsyncUntil('metadata', () => ({ color: 'yellow' }), EXPIRE_AFTER_MS)
+    await cache.rememberAsync('metadata', () => ({ color: 'yellow' }), EXPIRE_AFTER_MS)
 
     expect(Object.keys(cache.get('metadata'))).toContain('color')
   })
