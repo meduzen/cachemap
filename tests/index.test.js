@@ -151,4 +151,20 @@ describe('CacheMap.addUntil', () => {
     expect(cache.get('one')).toBe(1)
     expect(cache.get('three')).toBe(3)
   })
+
+})
+
+describe('CacheMap.rememberAsyncUntil', () => {
+  test('caches the result of an async handler with a duration', async () => {
+    const EXPIRE_AFTER_MS = 30
+
+    // function emulating an async network call
+    const fetchMetadata = async () => ({ date: new Date(), things: ['thing1'] })
+
+    await cache.rememberAsyncUntil('metadata', fetchMetadata, EXPIRE_AFTER_MS)
+    await setTimeout(EXPIRE_AFTER_MS + 1) // wait 1ms after the expiration
+    await cache.rememberAsyncUntil('metadata', () => ({ color: 'yellow' }), EXPIRE_AFTER_MS)
+
+    expect(Object.keys(cache.get('metadata'))).toContain('color')
+  })
 })

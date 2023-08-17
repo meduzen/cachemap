@@ -102,7 +102,7 @@ export default class CacheMap extends Map {
     .get(key)
 
   /**
-   * Adds a cache entry if the key is new in the cache, then returns the value.
+   * Adds an expirable cache entry if the key is new in the cache, then returns the value.
    *
    * The provided `value` can be:
    * - **any primitive** (string, number, boolean, array, object…);
@@ -127,7 +127,7 @@ export default class CacheMap extends Map {
   // )
 
   /**
-   * Adds a cache entry if the key is new in the cache, then returns the value.
+   * Adds an expirable cache entry if the key is new in the cache, then returns the value.
    *
    * The provided `value` can be:
    * - **any primitive** (string, number, boolean, array, object…);
@@ -147,4 +147,21 @@ export default class CacheMap extends Map {
 
   // save = () => { }
   // load = () => { }
+
+  /**
+   * Adds an expirable cache entry if the key is new in the cache, then returns the value.
+   *
+   * The provided `value` can be:
+   * - **any primitive** (string, number, boolean, array, object…);
+   * - a **sync function** returning a primitive.
+   *
+   * When `value` is a function, it is only executed when the cache key has not expired.
+   *
+   * @param {*} key
+   * @param {*|function():*} value Value to cache or a function returning it.
+   * @param {number|Date|Function} expiresOn Duration after which, or moment after which, or callback function deciding if the item cache should be refreshed.
+   * @param {number|Date|Function} expiresOn Duration after which, or moment after which, or callback function deciding if the item cache should be refreshed.
+   * @returns {Promise} Returns a Promise resolving with the (computed) `value` parameter.
+   */
+  rememberAsyncUntil = async (key, value, expiresOn) => this.rememberUntil(key, typeof value == 'function' ? await value() : value, expiresOn)
 }
