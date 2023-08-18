@@ -28,4 +28,4 @@ jobs:
       - name: Test
         run: npm test
       - name: Test types
-        run: npm run types && npm run test-types
+        run: npm run test-types && npm run types && npm run test-types
