@@ -19,9 +19,7 @@ export default class CacheMap extends Map {
       return this.#metadata = null
     }
 
-    if (!this.#metadata) {
-      this.#metadata = new Map()
-    }
+    this.#metadata ??= new Map()
   }
 
   /**
@@ -30,6 +28,42 @@ export default class CacheMap extends Map {
    * @returns {null}
    */
   clearMetadata = () => this.#withMetadata(false)
+
+  /**
+   * Create and cache the function that checks if the cached item is valid.
+   *
+   * When it runs to update the expiration function, `setExpiration` can
+   * also immediatly invalidate a stale item.
+   *
+   * @param {*} key
+   * @param {number|Date|Function} expiresOn Duration after which, or moment after which, or callback function deciding if the item cache should be refreshed.
+   * @param {boolean} deleteIfStale When provided, invalidate the cached item if stale.
+   */
+  setExpiration(key, expiresOn, deleteIfStale = true) {
+    this.#withMetadata()
+
+    // For convenience, assume `expiresOn` is a function.
+
+    let isCacheStale = expiresOn
+
+    // Turn a duration (number) into an expiration `Date`.
+
+    if (typeof expiresOn == 'number') {
+      expiresOn = new Date(new Date().getTime() + expiresOn)
+    }
+
+    // Turn an expiration `Date` into a function comparing it to “now”.
+
+    if (expiresOn instanceof Date) {
+      isCacheStale = () => new Date() > expiresOn
+    }
+
+    this.#metadata.set(key, { isCacheStale })
+
+    if (deleteIfStale && isCacheStale(this.get(key))) {
+      this.delete(key)
+    }
+  }
 
   /**
    * Adds a cache entry if the specified key is new in the cache.
@@ -48,34 +82,15 @@ export default class CacheMap extends Map {
 
     this.#withMetadata()
 
-    const alreadyCached = this.#metadata.has(key)
+    const alreadyCached = this.#metadata?.has(key)
     const stale = alreadyCached && this.#metadata.get(key).isCacheStale(value)
 
     if (stale) {
       this.delete(key)
     }
 
-    // Create and cache the function that checks if the cached item is valid.
-
     if (stale || !alreadyCached) {
-
-      // For convenience, assume first `expiresOn` is a function.
-
-      let isCacheStale = expiresOn
-
-      // Turn a duration (number) into an expiration `Date`.
-
-      if (typeof expiresOn == 'number') {
-        expiresOn = new Date(new Date().getTime() + expiresOn)
-      }
-
-      // Turn an expiration `Date` into a function comparing it to “now”.
-
-      if (expiresOn instanceof Date) {
-        isCacheStale = () => new Date() > expiresOn
-      }
-
-      this.#metadata.set(key, { isCacheStale })
+      this.setExpiration(key, expiresOn, false)
     }
 
     return this.add(key, value)

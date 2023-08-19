@@ -57,7 +57,7 @@ describe('CacheMap.rememberAsync', () => {
 })
 
 describe('CacheMap.remember', () => {
-  test('sets epxirations using remember with a duration', async () => {
+  test('sets expirations using remember with a duration', async () => {
     const EXPIRE_AFTER_MS = 30
 
     const drich = cache.remember('cat', 'Drich', EXPIRE_AFTER_MS)
@@ -73,7 +73,7 @@ describe('CacheMap.remember', () => {
     expect(pitch).toBe('Pitch')
   })
 
-  test('sets epxirations using remember with a Date', async () => {
+  test('sets expirations using remember with a Date', async () => {
     const EXPIRE_AFTER_MS = 30
     const EXPIRATION_DATE = new Date(new Date().getTime() + EXPIRE_AFTER_MS)
 
@@ -90,7 +90,7 @@ describe('CacheMap.remember', () => {
     expect(pitch).toBe('Pitch')
   })
 
-  test('sets epxirations using remember with a function', () => {
+  test('sets expirations using remember with a function', () => {
     const invalidateIfPitch = value => value == 'Pitch'
 
     // Invalidate the cache if the cat name is 'Pitch'
@@ -109,7 +109,7 @@ describe('CacheMap.remember', () => {
 describe('CacheMap.add', () => {
   test('returns its CacheMap instance', () => expect(cache.add('key', 0, 1)).toBe(cache))
 
-  test('sets epxirations using add with a duration', async () => {
+  test('sets expirations using add with a duration', async () => {
     const EXPIRE_AFTER_MS = 30
 
     cache.add('one', 1, EXPIRE_AFTER_MS)
@@ -124,7 +124,7 @@ describe('CacheMap.add', () => {
     expect(cache.get('three')).toBe(3)
   })
 
-  test('sets epxirations using add with a Date', async () => {
+  test('sets expirations using add with a Date', async () => {
     const EXPIRE_AFTER_MS = 30
     const EXPIRATION_DATE = new Date(new Date().getTime() + EXPIRE_AFTER_MS)
 
@@ -140,7 +140,7 @@ describe('CacheMap.add', () => {
     expect(cache.get('three')).toBe(3)
   })
 
-  test('sets epxirations using add with a function', async () => {
+  test('sets expirations using add with a function', async () => {
     const invalidateIfThree = value => value == 3
 
     cache.add('one', 1, invalidateIfThree)
@@ -167,4 +167,19 @@ describe('CacheMap.rememberAsync', () => {
 
     expect(Object.keys(cache.get('metadata'))).toContain('color')
   })
+})
+
+describe('CacheMap.setExpiration', () => {
+  test('sets expirations using a duration', () => {
+    const EXPIRE_AFTER_MS = 30
+
+    cache.add('one', 1, EXPIRE_AFTER_MS)
+    cache.add('one', 2, EXPIRE_AFTER_MS)
+    cache.setExpiration('one', -EXPIRE_AFTER_MS) // new expiration is in the past
+    cache.add('one', 4)
+
+    expect(cache.get('one')).toBe(4)
+  })
+
+  // @todo: add remaining test for `setExpiration`
 })

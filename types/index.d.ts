@@ -13,6 +13,17 @@ export default class CacheMap extends Map<any, any> {
      */
     clearMetadata: () => null;
     /**
+     * Create and cache the function that checks if the cached item is valid.
+     *
+     * When it runs to update the expiration function, `setExpiration` can
+     * also immediatly invalidate a stale item.
+     *
+     * @param {*} key
+     * @param {number|Date|Function} expiresOn Duration after which, or moment after which, or callback function deciding if the item cache should be refreshed.
+     * @param {boolean} deleteIfStale When provided, invalidate the cached item if stale.
+     */
+    setExpiration(key: any, expiresOn: number | Date | Function, deleteIfStale?: boolean): void;
+    /**
      * Adds a cache entry if the specified key is new in the cache.
      *
      * @param {*} key

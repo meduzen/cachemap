@@ -69,7 +69,7 @@ cache
   // .clear() // uncomment this line to kill everyone
 ```
 
-**Set items expiration** with a third parameter:
+**Set items expiration** with a third parameter or with `setExpiration`:
 
 ```js
 // Duration: cache `true` during 10 ms.
@@ -82,6 +82,9 @@ cache.add('best platformer', true, new Date(1990, 10, 21))
 cache.add('highscore', '15900', value => {
   return value > cache.get('highscore')
 }))
+
+// Change expiration duration for `invincibility` to 20 ms.
+cache.setExpiration('invincibility', 20)
 ```
 
 **Cache and return** using [`CacheMap.remember`](#cachemapremember):
@@ -174,6 +177,17 @@ cache.rememberAsync('rainy or not', 'you can hide').then(console.log) // 'you ca
 //   'rain' => 'you can hide'
 // }
 ```
+
+## `CacheMap.setExpiration`
+
+Add or change an item expiration on the fly.
+
+```js
+cache.setExpiration('invincibility', 20)
+```
+
+> **Warning**
+> If the new expiration condition makes the item stale, the item is removed from the cache.
 
 ## Better derived states with `remember`
 
