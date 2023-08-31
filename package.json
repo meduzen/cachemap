@@ -24,7 +24,8 @@
   },
   "size-limit": [
     {
-      "path": "src/index.js"
+      "path": "src/index.js",
+      "brotli": true
     }
   ],
   "files": [
