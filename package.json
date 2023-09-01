@@ -54,12 +54,12 @@
     "@babel/plugin-proposal-private-methods": "^7.14.5",
     "@babel/preset-env": "^7.12",
     "@size-limit/preset-small-lib": "^8.2.6",
-    "@vitest/coverage-v8": "^0.34.1",
-    "@vitest/ui": "^0.34.1",
-    "eslint": "^8.47.0",
+    "@vitest/coverage-v8": "^0.34.3",
+    "@vitest/ui": "^0.34.3",
+    "eslint": "^8.48.0",
     "size-limit": "^8.2.6",
-    "tsd": "^0.28.1",
+    "tsd": "^0.29",
     "typescript": "^5.1.6",
-    "vitest": "^0.34.1"
+    "vitest": "^0.34.3"
   }
 }
