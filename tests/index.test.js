@@ -58,12 +58,12 @@ describe('CacheMap.rememberAsync', () => {
 
 describe('CacheMap.remember', () => {
   test('sets expirations using remember with a duration', async () => {
-    const EXPIRE_AFTER_MS = 30
+    const EXPIRE_AFTER_MS = 10
 
     const drich = cache.remember('cat', 'Drich', EXPIRE_AFTER_MS)
     const kisa = cache.remember('cat', 'Kisa', EXPIRE_AFTER_MS)
 
-    await setTimeout(EXPIRE_AFTER_MS + 1) // wait 1ms after the expiration
+    await setTimeout(EXPIRE_AFTER_MS + 5) // wait 1ms after the expiration
 
     const pitch = cache.remember('cat', 'Pitch', EXPIRE_AFTER_MS)
 
@@ -74,13 +74,13 @@ describe('CacheMap.remember', () => {
   })
 
   test('sets expirations using remember with a Date', async () => {
-    const EXPIRE_AFTER_MS = 30
+    const EXPIRE_AFTER_MS = 10
     const EXPIRATION_DATE = new Date(new Date().getTime() + EXPIRE_AFTER_MS)
 
     const drich = cache.remember('cat', 'Drich', EXPIRATION_DATE)
     const kisa = cache.remember('cat', 'Kisa', EXPIRATION_DATE)
 
-    await setTimeout(EXPIRE_AFTER_MS + 1) // wait 1ms after the expiration
+    await setTimeout(EXPIRE_AFTER_MS + 5) // wait 1ms after the expiration
 
     const pitch = cache.remember('cat', 'Pitch', EXPIRATION_DATE)
 
@@ -110,13 +110,13 @@ describe('CacheMap.add', () => {
   test('returns its CacheMap instance', () => expect(cache.add('key', 0, 1)).toBe(cache))
 
   test('sets expirations using add with a duration', async () => {
-    const EXPIRE_AFTER_MS = 30
+    const EXPIRE_AFTER_MS = 10
 
     cache.add('one', 1, EXPIRE_AFTER_MS)
     cache.add('one', 2, EXPIRE_AFTER_MS)
     cache.add('three', 2, EXPIRE_AFTER_MS)
 
-    await setTimeout(EXPIRE_AFTER_MS + 1) // wait 1ms after the expiration
+    await setTimeout(EXPIRE_AFTER_MS + 5) // wait 1ms after the expiration
 
     cache.add('three', 3, EXPIRE_AFTER_MS)
 
@@ -125,14 +125,14 @@ describe('CacheMap.add', () => {
   })
 
   test('sets expirations using add with a Date', async () => {
-    const EXPIRE_AFTER_MS = 30
+    const EXPIRE_AFTER_MS = 10
     const EXPIRATION_DATE = new Date(new Date().getTime() + EXPIRE_AFTER_MS)
 
     cache.add('one', 1, EXPIRATION_DATE)
     cache.add('one', 2, EXPIRATION_DATE)
     cache.add('three', 2, EXPIRATION_DATE)
 
-    await setTimeout(EXPIRE_AFTER_MS + 1) // wait 1ms after the expiration
+    await setTimeout(EXPIRE_AFTER_MS + 5) // wait 1ms after the expiration
 
     cache.add('three', 3, EXPIRATION_DATE)
 
@@ -151,18 +151,17 @@ describe('CacheMap.add', () => {
     expect(cache.get('one')).toBe(1)
     expect(cache.get('three')).toBe(3)
   })
-
 })
 
 describe('CacheMap.rememberAsync', () => {
   test('caches the result of an async handler with a duration', async () => {
-    const EXPIRE_AFTER_MS = 30
+    const EXPIRE_AFTER_MS = 10
 
     // function emulating an async network call
     const fetchMetadata = async () => ({ date: new Date(), things: ['thing1'] })
 
     await cache.rememberAsync('metadata', fetchMetadata, EXPIRE_AFTER_MS)
-    await setTimeout(EXPIRE_AFTER_MS + 1) // wait 1ms after the expiration
+    await setTimeout(EXPIRE_AFTER_MS + 5) // wait 1ms after the expiration
     await cache.rememberAsync('metadata', () => ({ color: 'yellow' }), EXPIRE_AFTER_MS)
 
     expect(Object.keys(cache.get('metadata'))).toContain('color')
@@ -171,7 +170,7 @@ describe('CacheMap.rememberAsync', () => {
 
 describe('CacheMap.setExpiration', () => {
   test('sets expirations using a duration', () => {
-    const EXPIRE_AFTER_MS = 30
+    const EXPIRE_AFTER_MS = 10
 
     cache.add('one', 1, EXPIRE_AFTER_MS)
     cache.add('one', 2, EXPIRE_AFTER_MS)
