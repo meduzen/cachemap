@@ -2,13 +2,13 @@
 
 The `CacheMap` class extends the `Map` object to use it as a key-value cache.
 
-It shines in situations when you want to cache derived state (values computed from others) or that are the result of async operations (e.g. `fetch`).
+It shines in situations when you want to cache derived state (values __computed__ from others) or that are the result of async operations (e.g. `fetch`).
+
+It’s mostly inspired by how [Laravel `Cache::remember`](https://laravel.com/docs/10.x/cache#retrieve-store) works and by
 
 [![Node.js CI](https://github.com/meduzen/cachemap/actions/workflows/node.js.yml/badge.svg)](https://github.com/meduzen/cachemap/actions/workflows/node.js.yml)
 
-The package is lightweight ([157 bytes compressed](https://bundlejs.com/?q=@frontacles/cachemap&bundle), not tree-shakeable (it’s a class!), typed and tested.
-
-It’s mostly inspired by how [Laravel `Cache::remember`](https://laravel.com/docs/10.x/cache#retrieve-store) works.
+The package is lightweight ([157 bytes compressed](https://bundlejs.com/?q=@frontacles/cachemap&bundle)), not tree-shakeable (it’s a class!), typed and tested.
 
 ## Installation
 
@@ -32,7 +32,7 @@ Not using a package manager? Download [the package files](https://github.com/med
 
 Without conditions provided, the methods specific to `CacheMap` are all designed to create a **new item** in the cache: if the key already exists, the cache item won’t be touched.
 
-With expiration conditions (a `Integer` duration, a `Date`, or a condition in a callback function), a cached item can be updated.
+With expiration conditions, a cached item can be updated. An expiration condition is a `Integer` duration, a `Date`, or a condition in a callback function
 
 In both scenario, you still have the possibility to **touch cached items** using the methods from `Map`, all inherited by `CacheMap` without being changed:
 - clear the cache with [`CacheMap.clear`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/clear);
@@ -87,7 +87,7 @@ cache.add('highscore', '15900', value => {
 cache.setExpiration('invincibility', 20)
 ```
 
-**Cache and return** using [`CacheMap.remember`](#cachemapremember):
+**Cache and return** a value using [`CacheMap.remember`](#cachemapremember):
 
 ```js
 cache.remember('last visited level', '1-3') // 1-3
