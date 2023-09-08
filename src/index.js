@@ -9,11 +9,27 @@ export default class CacheMap extends Map {
    */
   #metadata
 
-  withMetadata = (withMetadata = true) => {
-    if (withMetadata && !this.#metadata) {
+  /**
+   * Create or destroy the items metadata Map.
+   *
+   * @returns {void|null}
+   */
+  #withMetadata = (withMetadata = true) => {
+    if (!withMetadata) {
+      return this.#metadata = null
+    }
+
+    if (!this.#metadata) {
       this.#metadata = new Map()
     }
   }
+
+  /**
+   * Clear all metadata.
+   *
+   * @returns {null}
+   */
+  clearMetadata = () => this.#withMetadata(false)
 
   /**
    * Adds a cache entry if the specified key is new in the cache.
@@ -84,7 +100,7 @@ export default class CacheMap extends Map {
    * @returns {*} Returns the (computed) `value` parameter.
    */
   rememberDuring(key, value, expiresOn) {
-    this.withMetadata()
+    this.#withMetadata()
 
     const alreadyCached = this.#metadata.has(key)
     const stale = alreadyCached && this.#metadata.get(key).isCacheStale(value)
