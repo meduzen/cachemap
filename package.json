@@ -20,7 +20,9 @@
     "build": "echo \"Nothing to build, this command is only here to please size-limit GitHub action\" && exit 0",
     "size": "size-limit",
     "lint": "npm exec eslint src tests",
-    "lint-fix": "npm exec eslint src tests --fix"
+    "lint-fix": "npm exec eslint src tests --fix",
+    "nolyfill": "npm exec nolyfill",
+    "nolyfill-install": "npm exec nolyfill install"
   },
   "size-limit": [
     {
@@ -53,13 +55,16 @@
     "@babel/eslint-parser": "^7.19.1",
     "@babel/plugin-proposal-private-methods": "^7.14.5",
     "@babel/preset-env": "^7.12",
-    "@size-limit/preset-small-lib": "^8.2.6",
+    "@size-limit/preset-small-lib": "^9.0.0",
     "@vitest/coverage-v8": "^0.34.3",
     "@vitest/ui": "^0.34.3",
     "eslint": "^8.48.0",
-    "size-limit": "^8.2.6",
+    "size-limit": "^9.0.0",
     "tsd": "^0.29",
     "typescript": "^5.1.6",
     "vitest": "^0.34.3"
+  },
+  "overrides": {
+    "has": "npm:@nolyfill/has@latest"
   }
 }
