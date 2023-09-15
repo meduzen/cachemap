@@ -4,6 +4,10 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## Unreleased
 
+### New
+
+- `CacheMap.pull` allows you to retrieve an item from the cache and remove it from the cache.
+
 ### Under the hood
 
 - Types: fix key parameter restricted to strings in Cachemap methods.

@@ -6,5 +6,6 @@ const cache = new CacheMap()
 
 expectType<CacheMap>(cache)
 expectType<CacheMap>(cache.add('color', 'green'))
+expectType<any>(cache.pull('color'))
 expectType<any>(cache.remember('color', 'green'))
 expectType<Promise<any>>(cache.rememberAsync('color', 'green'))
