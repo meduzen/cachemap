@@ -1,10 +1,10 @@
 # `CacheMap`
 
-The `CacheMap` class extends the `Map` object to use it as a key-value cache.
+`CacheMap`is a key-value cache that extends the [`Map` class](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map).
 
-It shines in situations when you want to cache derived state (values __computed__ from others) or that are the result of async operations (e.g. `fetch`).
+It shines in situations when you want to cache derived state (values _computed_ from others, like in [Vue `computed` properties](https://vuejs.org/guide/essentials/computed.html#computed-caching-vs-methods) and [React `useMemo`](https://react.dev/reference/react/useMemo)), but also the result of asynchronous operations (e.g. `fetch`).
 
-It’s mostly inspired by how [Laravel `Cache::remember`](https://laravel.com/docs/10.x/cache#retrieve-store) works and by
+It’s mostly inspired by how [Laravel `Cache::remember`](https://laravel.com/docs/10.x/cache#retrieve-store) works.
 
 [![Node.js CI](https://github.com/meduzen/cachemap/actions/workflows/node.js.yml/badge.svg)](https://github.com/meduzen/cachemap/actions/workflows/node.js.yml)
 
@@ -24,20 +24,20 @@ Import the class in your script:
 import CacheMap from '@frontacles/cachemap'
 ```
 
-Not using a package manager? Download [the package files](https://github.com/meduzen/cachemap/releases) in your project and take the files in `/src`.
+Not using a package manager? Download [the package files](https://github.com/meduzen/cachemap/releases) and import `CacheMap` from `{pathToUncompressedArchive}/src`.
 
 ## The `CacheMap` class
 
 `CacheMap` brings some methods that can all cache values, and optionally receive expiration conditions to control the cache lifetime.
 
-Without conditions provided, the methods specific to `CacheMap` are all designed to create a **new item** in the cache: if the key already exists, the cache item won’t be touched.
+Without expiration conditions provided, the methods specific to `CacheMap` are all designed to create a **new item** in the cache: if the key already exists, the cache item won’t be changed.
 
-With expiration conditions, a cached item can be updated. An expiration condition is a `Integer` duration, a `Date`, or a condition in a callback function
+With expiration conditions, a cached item can be updated when the expiration condition is met. An expiration condition is either an `Integer` duration (in milliseconds), either a `Date` object, either callback function.
 
-In both scenario, you still have the possibility to **touch cached items** using the methods from `Map`, all inherited by `CacheMap` without being changed:
+In both scenario, you still have the possibility to **touch cached items** using the methods from `Map`. All `Map` methods are inherited by `CacheMap` without being changed:
 - clear the cache with [`CacheMap.clear`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/clear);
 - delete an item from the cache with [`CacheMap.delete`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/delete);
-- update the value of a cached item with [`CacheMap.set`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/set).
+- add or update the value of a cached item with [`CacheMap.set`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/set).
 
 ### Overview
 
