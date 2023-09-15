@@ -73,7 +73,7 @@ export default class CacheMap extends Map {
    * @param {(number|Date|Function)=} expiresOn Duration after which, or moment after which, or callback function deciding if the item cache should be refreshed.
    * @returns {CacheMap}
    */
-  add(key, value, expiresOn = undefined) {
+  add(key, value, expiresOn = this.#metadata?.get(key)?.isCacheStale ?? undefined) {
     if (!expiresOn) {
       return this.has(key) ? this : this.set(key, value)
     }
@@ -83,7 +83,7 @@ export default class CacheMap extends Map {
     this.#withMetadata()
 
     const alreadyCached = this.#metadata?.has(key)
-    const stale = alreadyCached && this.#metadata.get(key).isCacheStale(value)
+    const stale = alreadyCached && this.#metadata.get(key).isCacheStale(value, this.get(key))
 
     if (stale) {
       this.delete(key)
@@ -93,7 +93,7 @@ export default class CacheMap extends Map {
       this.setExpiration(key, expiresOn, false)
     }
 
-    return this.add(key, value)
+    return this.add(key, value, false) // `false` to not recursively run into the expiration handling process (infinite loop)
   }
 
   /**
