@@ -68,7 +68,7 @@ cache
   // .clear() // uncomment this line to kill everyone
 ```
 
-**Cache and forget** using [`CacheMap.pull`](#cachemapull):
+**Cache and forget** using [`CacheMap.pull`](#cachemappull):
 
 ```js
 let assistant = cache.pull('tiny assistant') // 'Toad'
