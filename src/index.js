@@ -97,6 +97,18 @@ export default class CacheMap extends Map {
   }
 
   /**
+   * Get a cached item and remove it from the cache.
+   *
+   * @param {*} key
+   * @returns {*} Returns the found item, or undefined if not found.
+   */
+  pull = (key) => {
+    const value = this.get(key)
+    this.delete(key)
+    return value
+  }
+
+  /**
    * Adds a cache entry if the key is new in the cache, then returns the value.
    *
    * The provided value can be of any type, and can also be a function that

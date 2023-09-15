@@ -33,6 +33,13 @@ export default class CacheMap extends Map<any, any> {
      */
     add(key: any, value: any | (() => any), expiresOn?: (number | Date | Function) | undefined): CacheMap;
     /**
+     * Get a cached item and remove it from the cache.
+     *
+     * @param {*} key
+     * @returns {*} Returns the found item, or undefined if not found.
+     */
+    pull: (key: any) => any;
+    /**
      * Adds a cache entry if the key is new in the cache, then returns the value.
      *
      * The provided value can be of any type, and can also be a function that

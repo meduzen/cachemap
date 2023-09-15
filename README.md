@@ -87,11 +87,20 @@ cache.add('highscore', '15900', value => {
 cache.setExpiration('invincibility', 20)
 ```
 
+**Cache and forget** using [`CacheMap.pull`](#cachemappull):
+
+```js
+let assistant = cache.pull('tiny assistant') // 'Toad'
+
+cache.has('tiny assistant') // false
+cache.pull('tiny assistant') // undefined
+```
+
 **Cache and return** a value using [`CacheMap.remember`](#cachemapremember):
 
 ```js
-cache.remember('last visited level', '1-3') // 1-3
-cache.remember('last visited level', '8-2') // still returns '1-3', it was cached!
+let lastLevel = cache.remember('last visited level', '1-3') // 1-3
+lastLevel = cache.remember('last visited level', '8-2') // still returns '1-3', it was cached!
 ```
 
 **Cache and return** the computed value of a function using [`CacheMap.remember`](#cachemapremember):
@@ -129,6 +138,16 @@ cache
 //   'next full moon' => 2023-08-13T14:04:51.876Z,
 //   'cloud conditions' => 'hopefully decent'
 // }
+```
+
+### `CacheMap.pull`
+
+`CacheMap.pull` retrieves an item from the cache and then delete the item. If the item is not found, it returns `undefined`.
+
+```js
+cache.add('draft article', 'Lorem drafting ipsum all the things')
+
+const draft = cache.pull('draft article')
 ```
 
 ### `CacheMap.remember`
