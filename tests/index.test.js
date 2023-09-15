@@ -17,6 +17,24 @@ describe('CacheMap.add', () => {
   })
 })
 
+describe('CacheMap.pull', () => {
+  test('returns and delete an existing item', () => {
+    cache.add('key', 1)
+
+    expect(cache.has('key')).toBeTruthy()
+    expect(cache.pull('key')).toBe(1)
+    expect(cache.has('key')).toBeFalsy()
+  })
+
+  test('returns and delete a non-existing item', () => {
+    cache.add('key', 1)
+
+    expect(cache.has('keyTwo')).toBeFalsy()
+    expect(cache.pull('keyTwo')).toBe(undefined)
+    expect(cache.has('keyTwo')).toBeFalsy()
+  })
+})
+
 describe('CacheMap.remember', () => {
   test('caches the result of a sync handler', () => {
     cache.remember('memories', () => 7 + 14)
