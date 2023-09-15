@@ -19,8 +19,8 @@
     "watch": "vitest watch",
     "build": "echo \"Nothing to build, this command is only here to please size-limit GitHub action\" && exit 0",
     "size": "size-limit",
-    "lint": "npm exec eslint src/**/*.js tests/index.test.js",
-    "lint-fix": "npm exec eslint src/**/*.js tests/index.test.js --fix"
+    "lint": "npm exec eslint src tests",
+    "lint-fix": "npm exec eslint src tests --fix"
   },
   "size-limit": [
     {
