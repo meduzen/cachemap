@@ -2,9 +2,9 @@
 
 `CacheMap` is a key-value cache built upon [`Map`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map).
 
-It has expiration mechanisms and can directly cache any value, derived state (values _computed_ from others, like in [Vue `computed` properties](https://vuejs.org/guide/essentials/computed.html#computed-caching-vs-methods) and [React `useMemo`](https://react.dev/reference/react/useMemo)) or the result of asynchronous operations (e.g. [`fetch`](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch).
+It has expiration mechanisms and can directly cache any value, derived state (values _computed_ from others, like in [Vue `computed` properties](https://vuejs.org/guide/essentials/computed.html#computed-caching-vs-methods) and [React `useMemo`](https://react.dev/reference/react/useMemo)) or the result of asynchronous operations (e.g. [`fetch`](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch)).
 
-It’s mostly inspired by how [Laravel `Cache::remember`](https://laravel.com/docs/10.x/cache#retrieve-store) works.
+It’s mostly inspired by [Laravel `Cache::remember`](https://laravel.com/docs/10.x/cache#retrieve-store).
 
 [![Node.js CI](https://github.com/meduzen/cachemap/actions/workflows/node.js.yml/badge.svg)](https://github.com/meduzen/cachemap/actions/workflows/node.js.yml)
 
@@ -12,29 +12,29 @@ The package is lightweight ([157 bytes compressed](https://bundlejs.com/?q=@fron
 
 ## Installation
 
-Install the package:
+Install the package in a project by using this command your terminal:
 
 ```sh
 npm install @frontacles/cachemap
 ```
 
-Import the class in your script:
+Import the `CacheMap` class in your script:
 
 ```js
 import CacheMap from '@frontacles/cachemap'
 ```
 
-Not using a package manager? Download [the package files](https://github.com/meduzen/cachemap/releases) and import `CacheMap` from `{pathToUncompressedArchive}/src`.
+Not using a package manager? Download [the package archive](https://github.com/meduzen/cachemap/releases) and import `CacheMap` from its `/src` folder.
 
 ## The `CacheMap` class
 
-`CacheMap` brings some methods that can all cache values, and optionally receive expiration conditions to control the cache lifetime.
+`CacheMap` brings methods that can cache values and (optionally) receive expiration conditions to control the cache lifetime.
 
-Without expiration conditions provided, the methods specific to `CacheMap` are all designed to create a **new item** in the cache: if the key already exists, the cache item won’t be changed.
+Without expiration conditions provided, the methods specific to `CacheMap` are designed to create a **new item** in the cache: if the key already exists, the cache item won’t be changed.
 
-With expiration conditions, a cached item can be updated when the expiration condition is met. An expiration condition is either an `Integer` duration (in milliseconds), either a `Date` object, either callback function.
+With expiration conditions, a cached item can be updated when the expiration condition is met. An expiration condition is either an `Integer` duration (in milliseconds), either a `Date` object, either a callback function.
 
-In both scenario, you still have the possibility to **touch cached items** using the methods from `Map`. All `Map` methods are inherited by `CacheMap` without being changed:
+In both cases, you still have the possibility to **touch cached items** using `Map` native methods, all inherited by `CacheMap` without being changed:
 - clear the cache with [`CacheMap.clear`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/clear);
 - delete an item from the cache with [`CacheMap.delete`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/delete);
 - add or update the value of a cached item with [`CacheMap.set`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/set).
