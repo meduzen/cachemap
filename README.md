@@ -110,7 +110,7 @@ cache.add('invincibility', true, 10)
 // Expiration date: cache `true` until November 21, 1990.
 cache.add('best platformer', true, new Date(1990, 10, 21))
 
-// Callback: cache `15900` unless a higher score is being cached.
+// Callback: cache `15900` until a higher score is being cached.
 cache.add('highscore', '15900', (newValue, oldValue) => {
   return newValue > oldValue
 }))
