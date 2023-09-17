@@ -41,19 +41,19 @@ In both cases, you still have the possibility to **touch cached items** using `M
 
 ### Overview
 
-Create a cache (or many caches) by instantiating CacheMap like you would [instantiate a `Map`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/Map#parameters):
+Create a cache by instantiating `CacheMap` like you would [instantiate a `Map`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/Map#parameters):
 
 ```js
 import CacheMap from '@frontacles/cachemap'
 
 const cache = new CacheMap() // no parameter creates an empty cache
 
-const SuperMarioBros3Cache = new CacheMap([ // init with array of ['key', value]
+const superMarioBros3Cache = new CacheMap([ // init with array of ['key', value]
   ['country', 'Mushroom Kingdom'],
   ['hierarchy', {
     boss: 'Bowser',
     chiefs: ['Lemmy', 'Iggy', 'Morton', 'Larry', 'Ludwig', 'Wendy', 'Roy'],
-    randos: ['Goomba', 'Koopa Troopa', 'Cheep cheep', 'Pirhana Plant']
+    randos: ['Goomba', 'Koopa Troopa', 'Cheep cheep', 'Pirhana Plant'],
   }],
 ])
 ```
@@ -61,12 +61,12 @@ const SuperMarioBros3Cache = new CacheMap([ // init with array of ['key', value]
 **Add new items** in the cache using [`CacheMap.add`](#cachemapadd):
 
 ```js
-const cache = SuperMarioBros3Cache // rename our SMB3 cache, for convenience
+const cache = superMarioBros3Cache // rename our cache, for convenience
 
 cache
   .add('plumbers', ['Mario', 'Luigi']) // returns `cache`, allowing chaining
   .add('tiny assistant', 'Toad')
-  // .clear() // uncomment this line to kill everyone
+  // .clear() // uncomment this line to clear the cache (and kill everyone)
 ```
 
 **Set items expiration** with a third parameter or with `setExpiration`:
