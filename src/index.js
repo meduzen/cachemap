@@ -10,7 +10,7 @@ export default class CacheMap extends Map {
   #metadata
 
   /**
-   * Create or destroy the items metadata Map.
+   * Create or destroy the Map of entries metadata.
    *
    * @returns {void|null}
    */
@@ -30,14 +30,14 @@ export default class CacheMap extends Map {
   clearMetadata = () => this.#withMetadata(false)
 
   /**
-   * Create and cache the function that checks if the cached item is valid.
+   * Create and cache the function that checks if the cache entry is fresh.
    *
    * When it runs to update the expiration function, `setExpiration` can
-   * also immediatly invalidate a stale item.
+   * also immediatly invalidate a stale entry.
    *
    * @param {*} key
-   * @param {number|Date|Function} expiresOn Duration after which, or moment after which, or callback function deciding if the item cache should be refreshed.
-   * @param {boolean} deleteIfStale When provided, invalidate the cached item if stale.
+   * @param {number|Date|Function} expiresOn Duration after which, or moment after which, or callback function deciding if the cache entry should be refreshed.
+   * @param {boolean} deleteIfStale When provided, invalidate the cache entry if stale.
    */
   setExpiration(key, expiresOn, deleteIfStale = true) {
     this.#withMetadata()
@@ -70,7 +70,7 @@ export default class CacheMap extends Map {
    *
    * @param {*} key
    * @param {*|function():*} value Value to cache or a function returning it.
-   * @param {(number|Date|Function)=} expiresOn Duration after which, or moment after which, or callback function deciding if the item cache should be refreshed.
+   * @param {(number|Date|Function)=} expiresOn Duration after which, or moment after which, or callback function deciding if the cache entry should be refreshed.
    * @returns {CacheMap}
    */
   add(key, value, expiresOn = this.#metadata?.get(key)?.isCacheStale ?? undefined) {
@@ -97,10 +97,10 @@ export default class CacheMap extends Map {
   }
 
   /**
-   * Get a cached item and remove it from the cache.
+   * Get a cache entry and remove it from the cache.
    *
    * @param {*} key
-   * @returns {*} Returns the found item, or undefined if not found.
+   * @returns {*} Returns the entry value, or undefined if not found.
    */
   pull = (key) => {
     const value = this.get(key)
@@ -116,7 +116,7 @@ export default class CacheMap extends Map {
    *
    * @param {*} key
    * @param {*|function():*} value Value to cache or a function returning it.
-   * @param {(number|Date|Function)=} expiresOn Duration after which, or moment after which, or callback function deciding if the item cache should be refreshed.
+   * @param {(number|Date|Function)=} expiresOn Duration after which, or moment after which, or callback function deciding if the cache entry should be refreshed.
    * @returns {*} Returns the (computed) `value` parameter.
    */
   remember = (key, value, expiresOn = undefined) => this
@@ -135,7 +135,7 @@ export default class CacheMap extends Map {
    *
    * @param {*} key
    * @param {*|function():(*|Promise)} value Value to cache or a (sync or async) function returning it.
-   * @param {(number|Date|Function)=} expiresOn Duration after which, or moment after which, or callback function deciding if the item cache should be refreshed.
+   * @param {(number|Date|Function)=} expiresOn Duration after which, or moment after which, or callback function deciding if the cache entry should be refreshed.
    * @returns {Promise} Returns a Promise resolving with the (computed) `value` parameter.
    */
   rememberAsync = async (key, value, expiresOn = undefined) => this

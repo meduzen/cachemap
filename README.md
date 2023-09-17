@@ -30,14 +30,14 @@ Not using a package manager? Download [the package archive](https://github.com/m
 
 `CacheMap` brings methods that can cache values and (optionally) receive expiration conditions to control the cache lifetime.
 
-Without expiration conditions provided, the methods specific to `CacheMap` are designed to create a **new item** in the cache: if the key already exists, the cache item won’t be changed.
+Without expiration conditions provided, the methods specific to `CacheMap` are designed to create a **new entry** to the cache: if the key already exists, its cached value won’t be changed.
 
-With expiration conditions, a cached item can be updated when the expiration condition is met. An expiration condition is either an `Integer` duration (in milliseconds), either a `Date` object, either a callback function.
+With expiration conditions, a cache entry can be updated when the expiration condition is met. An expiration condition is either an `Integer` duration (in milliseconds), either a `Date` object, either a callback function.
 
-In both cases, you still have the possibility to **touch cached items** using `Map` native methods, all inherited by `CacheMap` without being changed:
+In both cases, you still have the possibility to **touch cached entries** using `Map` native methods, all inherited by `CacheMap` without being changed:
 - clear the cache with [`CacheMap.clear`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/clear);
-- delete an item from the cache with [`CacheMap.delete`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/delete);
-- add or update the value of a cached item with [`CacheMap.set`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/set).
+- delete an entry from the cache with [`CacheMap.delete`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/delete);
+- add or update the value of a cache entry with [`CacheMap.set`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/set).
 
 ### Overview
 
@@ -58,7 +58,7 @@ const superMarioBros3Cache = new CacheMap([ // init with array of ['key', value]
 ])
 ```
 
-**Add new items** in the cache using [`CacheMap.add`](#cachemapadd):
+**Add a new entry** to the cache using [`CacheMap.add`](#cachemapadd):
 
 ```js
 const cache = superMarioBros3Cache // rename our cache, for convenience
@@ -101,7 +101,7 @@ async function prepareTinyHouse() {
 }
 ```
 
-**Set items expiration** with a third parameter or with `setExpiration`:
+**Set cache expiration** with a third parameter or with `setExpiration`:
 
 ```js
 // Duration: cache `true` during 10 ms.
@@ -121,7 +121,7 @@ cache.setExpiration('invincibility', 20)
 
 ### `CacheMap.add`
 
-`CacheMap.add` adds a new cache item, and returns its `CacheMap` instance, allowing fluent usage (methods chaining).
+`CacheMap.add` adds a new entry to the cache, and returns its `CacheMap` instance, allowing fluent usage (methods chaining).
 
 ```js
 import CacheMap from '@frontacles/cachemap'
@@ -142,7 +142,7 @@ cache
 
 ### `CacheMap.pull`
 
-`CacheMap.pull` retrieves an item from the cache and then delete the item. If the item is not found, it returns `undefined`.
+`CacheMap.pull` retrieves an entry and deletes it from the cache. If the entry is not found, `undefined` is returned.
 
 ```js
 cache.add('draft article', 'Lorem drafting ipsum all the things')
@@ -199,14 +199,14 @@ cache.rememberAsync('rainy or not', 'you can hide').then(console.log) // 'you ca
 
 ## `CacheMap.setExpiration`
 
-Add or change an item expiration on the fly.
+Add or change the expiration of a cache entry on the fly.
 
 ```js
 cache.setExpiration('invincibility', 20)
 ```
 
 > **Warning**
-> If the new expiration condition makes the item stale, the item is removed from the cache.
+> If the new expiration condition makes the entry stale, it is removed from the cache.
 
 ## Better derived states with `remember`
 
@@ -335,7 +335,7 @@ scores.clear() // [Map Iterator] {  }
 (@todo: move this to issues)
 
 - IndexedDB save/load (IndexedDB is the only reliable browser storage that [can store `Map` objects](because it’s compatible with `Map` objects: https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm#javascript_types)).
-- LRU (last recently used) to delete oldest created or oldest accessed items when the cache size reaches a given limit.
+- LRU (last recently used) to delete oldest created or oldest accessed entries when the cache size reaches a given limit.
 - Evaluate the need/benefits to use `WeakMap`.
 - Enrich map with convenient functions like `deleteMany`. It could be part of another class extending the base `CacheMap`. We could name it `SuperCacheMap` or `RichCacheMap` or something like this.
 

@@ -22,7 +22,7 @@ describe('CacheMap.add', () => {
 })
 
 describe('CacheMap.pull', () => {
-  test('returns and delete an existing item', () => {
+  test('returns and delete an existing entry', () => {
     cache.add('key', 1)
 
     expect(cache.has('key')).toBeTruthy()
@@ -30,7 +30,7 @@ describe('CacheMap.pull', () => {
     expect(cache.has('key')).toBeFalsy()
   })
 
-  test('returns and delete a non-existing item', () => {
+  test('returns and delete a non-existing entry', () => {
     cache.add('key', 1)
 
     expect(cache.has('keyTwo')).toBeFalsy()
