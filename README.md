@@ -69,25 +69,7 @@ cache
   // .clear() // uncomment this line to clear the cache (and kill everyone)
 ```
 
-**Set items expiration** with a third parameter or with `setExpiration`:
-
-```js
-// Duration: cache `true` during 10 ms.
-cache.add('invincibility', true, 10)
-
-// Expiration date: cache `true` until November 21, 1990.
-cache.add('best platformer', true, new Date(1990, 10, 21))
-
-// Callback: cache `15900` unless a higher score is being cached.
-cache.add('highscore', '15900', (newValue, oldValue) => {
-  return newValue > oldValue
-}))
-
-// Force a new expiration duration for `invincibility` to 20 ms.
-cache.setExpiration('invincibility', 20)
-```
-
-**Forget and return** using [`CacheMap.pull`](#cachemappull):
+**Forget and return** a value using [`CacheMap.pull`](#cachemappull):
 
 ```js
 let assistant = cache.pull('tiny assistant') // 'Toad'
@@ -115,8 +97,26 @@ cache.remember('bonus', () => randomFrom(['Mushroom', 'Fire flower', 'Star']))
 const tinyHouse = await cache.rememberAsync('tiny house', prepareTinyHouse)
 
 async function prepareTinyHouse() {
-  return computeChestContent().then(chest => chest.toByteBuffer())
+  return computeTreasureChest().then(chest => chest.toByteBuffer())
 }
+```
+
+**Set items expiration** with a third parameter or with `setExpiration`:
+
+```js
+// Duration: cache `true` during 10 ms.
+cache.add('invincibility', true, 10)
+
+// Expiration date: cache `true` until November 21, 1990.
+cache.add('best platformer', true, new Date(1990, 10, 21))
+
+// Callback: cache `15900` unless a higher score is being cached.
+cache.add('highscore', '15900', (newValue, oldValue) => {
+  return newValue > oldValue
+}))
+
+// Force a new expiration duration for `invincibility` to 20 ms.
+cache.setExpiration('invincibility', 20)
 ```
 
 ### `CacheMap.add`
