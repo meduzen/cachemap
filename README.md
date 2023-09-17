@@ -79,15 +79,15 @@ cache.add('invincibility', true, 10)
 cache.add('best platformer', true, new Date(1990, 10, 21))
 
 // Callback: cache `15900` unless a higher score is being cached.
-cache.add('highscore', '15900', value => {
-  return value > cache.get('highscore')
+cache.add('highscore', '15900', (newValue, oldValue) => {
+  return newValue > oldValue
 }))
 
-// Change expiration duration for `invincibility` to 20 ms.
+// Force a new expiration duration for `invincibility` to 20 ms.
 cache.setExpiration('invincibility', 20)
 ```
 
-**Cache and forget** using [`CacheMap.pull`](#cachemappull):
+**Forget and return** using [`CacheMap.pull`](#cachemappull):
 
 ```js
 let assistant = cache.pull('tiny assistant') // 'Toad'
