@@ -1,3 +1,5 @@
+/** @type {import('./types')} */
+
 // First-time written in https://github.com/DCMLab/reductive_analysis_app/commits/0e93a8b651c77e87786342b5152a47f65cc58c5c/src/js/new/utils/cache.js
 
 /**
@@ -5,7 +7,7 @@
  */
 export default class CacheMap extends Map {
   /**
-   * @type {Map} #Metadata
+   * @type {CacheMetadata} #Metadata
    */
   #metadata
 
