@@ -79,7 +79,7 @@ describe('CacheMap.rememberAsync', () => {
 })
 
 describe('CacheMap.remember', () => {
-  test('sets expiration using remember with a duration', async () => {
+  test('sets expiration using remember (with a direct value) with a duration', async () => {
     const EXPIRE_AFTER_MS = 10
 
     const drich = cache.remember('cat', 'Drich', EXPIRE_AFTER_MS)
