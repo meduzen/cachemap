@@ -8,11 +8,12 @@ export default class CacheMap extends Map<any, any> {
     constructor();
     constructor(iterable?: Iterable<readonly [any, any]>);
     /**
-     * Clear all metadata.
+     * Clear all metadata, or only the one for the provided key.
      *
-     * @returns {null}
+     * @param {any} key When provided, only clear the metadata for that key.
+     * @returns {void|null}
      */
-    clearMetadata: () => null;
+    clearMetadata(key?: any): void | null;
     /**
      * Create and cache the function that checks if the cache entry is fresh.
      *
