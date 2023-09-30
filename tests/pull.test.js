@@ -21,4 +21,7 @@ describe('CacheMap.pull', () => {
     expect(cache.pull('two')).toBe(undefined)
     expect(cache.has('two')).toBeFalsy()
   })
+
+  /* @todo: take a decision */
+  test.todo('do or do not touch the associated metadata once pulled')
 })
