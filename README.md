@@ -46,9 +46,9 @@ Create a cache by instantiating `CacheMap` like you would [instantiate a `Map`](
 ```js
 import CacheMap from '@frontacles/cachemap'
 
-const cache = new CacheMap() // no parameter creates an empty cache
+const exampleCache = new CacheMap() // no parameter creates an empty cache
 
-const superMarioBros3Cache = new CacheMap([ // init with array of ['key', value]
+const cache = new CacheMap([ // init with array of ['key', value]
   ['country', 'Mushroom Kingdom'],
   ['hierarchy', {
     boss: 'Bowser',
@@ -61,8 +61,6 @@ const superMarioBros3Cache = new CacheMap([ // init with array of ['key', value]
 **Add a new entry** to the cache using [`CacheMap.add`](#cachemapadd):
 
 ```js
-const cache = superMarioBros3Cache // rename our cache, for convenience
-
 cache
   .add('plumbers', ['Mario', 'Luigi']) // returns `cache`, allowing chaining
   .add('tiny assistant', 'Toad')
@@ -121,12 +119,9 @@ cache.setExpiration('invincibility', 20)
 
 ### `CacheMap.add`
 
-`CacheMap.add` adds a new entry to the cache, and returns its `CacheMap` instance, allowing fluent usage (methods chaining).
+`CacheMap.add` adds a new cache entry, and returns the cache, allowing fluent usage (methods chaining).
 
 ```js
-import CacheMap from '@frontacles/cachemap'
-const cache = new CacheMap()
-
 const nextFullMoonInBrussels = new Date(Date.parse('2023-08-31T03:35:00+02:00'))
 
 cache
@@ -145,16 +140,14 @@ cache
 `CacheMap.pull` retrieves an entry and deletes it from the cache. If the entry is not found, `undefined` is returned.
 
 ```js
-cache.add('draft article', 'Lorem drafting ipsum all the things')
-
 const draft = cache.pull('draft article')
+
+cache.has('draft article') // false
 ```
 
 ### `CacheMap.remember`
 
-`CacheMap.remember` adds a value to the cache, and returns it. It takes a primitive value or a callback function returning the value that is then stored in the cache.
-
-Like [`CacheMap.add`](#cachemapadd), it only updates the cache if the key is new. The returned value is always the cached one.
+`CacheMap.remember` adds an entry to the cache, and returns it. It’s exactly like [`CacheMap.add`](#cachemapadd), with the difference that it accepts not only a primitive value, but also a callback function providing the value to store in the cache.
 
 ```js
 const bills = [13.52, 17, 4.20, 21.6]
@@ -170,7 +163,8 @@ cache.remember('money you owe me', () => sum(bills))
 // CacheMap(1) [Map] { 'money you owe me' => 56.32 }
 ```
 
-On the second usage of `cache.remember` in the previous example, the function doesn’t run at all: as the key already exists in the cache, its value is immediatly returned.
+> [!NOTE] \n
+> On the second usage of `cache.remember`, the function doesn’t run at all: as the key already exists in the cache, its value is immediatly returned.
 
 ### `CacheMap.rememberAsync`
 
