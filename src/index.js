@@ -196,10 +196,44 @@ export default class CacheMap extends Map {
    * @param {(number|Date|Function)=} expiresOn Duration after which, or moment after which, or callback function deciding if the cache entry should be refreshed.
    * @returns {Promise} Returns a Promise resolving with the (computed) `value` parameter.
    */
-  rememberAsync = async (key, value, expiresOn = this.#metadata?.get(key)?.isCacheStale ?? undefined) =>
-    this
-      .add(key, typeof value == 'function' ? await value() : value, expiresOn)
-      .get(key)
+  // rememberAsync = async (key, value, expiresOn = this.#metadata?.get(key)?.isCacheStale ?? undefined) =>
+  //   this
+  //     .add(key, typeof value == 'function' ? await value() : value, expiresOn)
+  //     .get(key)
+
+  // Temporary implementation aiming at debugging a failing test.
+  // 1. We don’t want to run an async handler twice unless its cached value is stale.
+  // 2. We still need more tests for `rememberAsync` to be more on par with `remember`.
+
+  rememberAsync = async (key, value, expiresOn = this.#metadata?.get(key)?.isCacheStale ?? undefined) => {
+
+
+    if (!expiresOn) {
+      if (!this.has(key)) {
+        this.set(key, typeof value == 'function' ? await value() : value)
+      }
+
+      return this.get(key)
+    }
+
+    handleExpiration: {
+      this.#withMetadata()
+
+      const stale = this.#isStale(key, value)
+
+      if (stale) {
+        this.delete(key)
+      }
+
+      if (stale || !this.#metadata?.has(key)) {
+        this.setExpiration(key, expiresOn, false)
+      }
+    }
+
+    // `false` prevents to recursively run into the expiration process.
+
+    return this.add(key, value, false)
+  }
 
   // save = () => { }
   // load = () => { }
