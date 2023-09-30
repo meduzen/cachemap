@@ -23,6 +23,57 @@ describe('CacheMap.remember', () => {
     expect(pitch).toBe('Pitch')
   })
 
+  test('sets expiration using remember (with a function) with a duration', async () => {
+    const EXPIRE_AFTER_MS = 10
+
+    const drich = cache.remember('cat', () => 'Drich', EXPIRE_AFTER_MS)
+    const kisa = cache.remember('cat', () => 'Kisa', EXPIRE_AFTER_MS)
+
+    await setTimeout(EXPIRE_AFTER_MS + 5) // wait 5ms after the expiration
+
+    const pitch = cache.remember('cat', () => 'Pitch', EXPIRE_AFTER_MS)
+
+    expect(EXPIRE_AFTER_MS).toBeTypeOf('number')
+    expect(drich).toBe('Drich')
+    expect(kisa).toBe('Drich')
+    expect(pitch).toBe('Pitch')
+  })
+
+  test('doesn’t run a sync handler (using remember) when setting expiration with a duration if the cached entry is not stale', async () => {
+    let runsCounter = 0
+
+    const EXPIRE_AFTER_MS = 10
+
+    cache.remember('cat', () => {
+      runsCounter++
+      return 'Drich'
+    }, EXPIRE_AFTER_MS)
+
+    cache.remember('cat', () => {
+      runsCounter++
+      return 'Kisa'
+    }, EXPIRE_AFTER_MS)
+
+    await setTimeout(EXPIRE_AFTER_MS + 5) // wait 5ms after the expiration
+
+    cache.remember('cat', () => {
+      runsCounter++
+      return 'Pitch'
+    }, EXPIRE_AFTER_MS)
+
+    expect(runsCounter).toBe(2)
+  })
+
+  test('sets expiration using remember (with a function) with a function (newVal, oldVal)', () => {
+    const isGreaterThan = (a, b) => a > b
+
+    cache.remember('memories', () => 7 + 14, isGreaterThan)
+    cache.remember('memories', () => 43, isGreaterThan)
+    cache.remember('memories', () => 3 + 2, isGreaterThan)
+
+    expect(cache.get('memories')).toBe(43)
+  })
+
   test('sets expiration using remember with a Date', async () => {
     const EXPIRE_AFTER_MS = 10
     const EXPIRATION_DATE = new Date(new Date().getTime() + EXPIRE_AFTER_MS)
@@ -56,7 +107,7 @@ describe('CacheMap.remember', () => {
     expect(choucroute).toBe('Pitch')
   })
 
-  test('sets expiration using remember with a function (oldVal)', () => {
+  test('sets expiration using remember with a function (newVal, oldVal)', () => {
     const invalidateIfLongerName = (newVal, oldVal) => newVal.length > oldVal.length
 
     // Invalidate the cache if the name is longer
@@ -116,7 +167,7 @@ describe('CacheMap.add', () => {
     expect(cache.get('three')).toBe(3)
   })
 
-  test('sets expiration using add with a function (oldVal)', async () => {
+  test('sets expiration using add with a function (newVal, oldVal)', async () => {
     const wasThree = (newVal, oldVal) => oldVal == 3
 
     cache.add('one', 1, wasThree)
