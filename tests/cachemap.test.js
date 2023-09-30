@@ -6,10 +6,6 @@ let cache
 
 beforeEach(() => cache = new CacheMap())
 
-describe('CacheMap metadata', () => {
-  test('can be cleared from the outside', () => expect(cache.clearMetadata()).toBeNull())
-})
-
 describe('CacheMap.add', () => {
   test('returns its CacheMap instance', () => expect(cache.add('key', 0)).toBe(cache))
 

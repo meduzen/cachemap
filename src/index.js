@@ -25,11 +25,18 @@ export default class CacheMap extends Map {
   }
 
   /**
-   * Clear all metadata.
+   * Clear all metadata, or only the one for the provided key.
    *
-   * @returns {null}
+   * @param {any} key When provided, only clear the metadata for that key.
+   * @returns {void|null}
    */
-  clearMetadata = () => this.#withMetadata(false)
+  clearMetadata(key = undefined) {
+    if (key === undefined) {
+      return this.#withMetadata(false) // clear all metadata
+    }
+
+    this.#metadata.delete(key)
+  }
 
   /**
    * Create and cache the function that checks if the cache entry is fresh.
