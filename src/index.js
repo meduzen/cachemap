@@ -125,6 +125,27 @@ export default class CacheMap extends Map {
   }
 
   /**
+   * If needed, delete a stale cache entry and set is expiration mechanism.
+   *
+   * @param {*} key
+   * @param {*|function():*} value Value to cache or a function returning it.
+   * @param {number|Date} expiresOn Duration after which, or moment after which the cache entry should be refreshed.
+   */
+  #processExpiration(key, value, expiresOn) {
+    this.#withMetadata()
+
+    const stale = this.#isStale(key, value)
+
+    if (stale) {
+      this.delete(key)
+    }
+
+    if (stale || !this.#metadata?.has(key)) {
+      this.setExpiration(key, expiresOn, false)
+    }
+  }
+
+  /**
    * Adds a cache entry if the specified key is new in the cache.
    *
    * @param {*} key
@@ -140,19 +161,7 @@ export default class CacheMap extends Map {
         : this.set(key, typeof value == 'function' ? value() : value)
     }
 
-    handleExpiration: {
-      this.#withMetadata()
-
-      const stale = this.#isStale(key, value)
-
-      if (stale) {
-        this.delete(key)
-      }
-
-      if (stale || !this.#metadata?.has(key)) {
-        this.setExpiration(key, expiresOn, false)
-      }
-    }
+    this.#processExpiration(key, value, expiresOn)
 
     // `false` prevents to recursively run into the expiration process.
 
@@ -223,20 +232,7 @@ export default class CacheMap extends Map {
       return this.get(key)
     }
 
-    handleExpiration: {
-      this.#withMetadata()
-
-      // console.log('async', key)
-      const stale = this.#isStale(key, value)
-
-      if (stale) {
-        this.delete(key)
-      }
-
-      if (stale || !this.#metadata?.has(key)) {
-        this.setExpiration(key, expiresOn, false)
-      }
-    }
+    this.#processExpiration(key, value, expiresOn)
 
     // `false` prevents to recursively run into the expiration process.
 
