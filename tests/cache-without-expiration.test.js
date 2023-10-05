@@ -84,20 +84,20 @@ describe('CacheMap.rememberAsync', () => {
   })
 
   test('doesn’t unnecessarily run an async handler if the cache entry is not stale', async () => {
-    let funcExecCount = 0
+    let executionCount = 0
 
     // function emulating an async network call
     const fetchMetadata = async () => {
-      funcExecCount++
+      executionCount++
       return { date: new Date(), things: ['thing1'] }
     }
 
     await cache.rememberAsync('metadata', fetchMetadata)
     await cache.rememberAsync('metadata', () => {
-      funcExecCount++
+      executionCount++
       return { color: 'yellow' }
     })
 
-    expect(funcExecCount).toBe(1)
+    expect(executionCount).toBe(1)
   })
 })

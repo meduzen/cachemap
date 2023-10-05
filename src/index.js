@@ -101,6 +101,7 @@ export default class CacheMap extends Map {
     // Retrieve expiration function and type of expiration.
 
     const { isCacheStale, isFunction } = this.#metadata.get(key)
+    console.log(isCacheStale, isFunction)
 
     if (typeof value == 'function' && isFunction) {
 
@@ -110,9 +111,12 @@ export default class CacheMap extends Map {
        * In order to discourage such usage, another option could be to
        * mark the value as stale anyway, but a warning is prefered.
        */
-      console.warn('Both the value you are trying to cache and its expiration are functions, forcing @frontacles/cachemap to execute the “value function” because the expiration function makes use of the value returned by the value function. This scenario is not recommended and can lead to performance issues.')
+      console.warn('Both the value you are trying to cache and its expiration are functions. In that scenario, cachemap consider the cache entry as fresh. See [URL].')
+      console.warn('Both the value you are trying to cache and its expiration are functions, which would force @frontacles/cachemap to execute the “value function” because its returned value is passed down to the expiration function. This scenario is not recommended and can lead to performance issues. ')
 
-      value = value()
+      return false
+
+      // value = value()
     }
 
     return isCacheStale(value, this.get(key))
@@ -148,7 +152,7 @@ export default class CacheMap extends Map {
       }
     }
 
-    // `false` prevent to recursively run the expiration process, already done.
+    // `false` prevents to recursively run into the expiration process.
 
     return this.add(key, value, false)
   }
@@ -207,6 +211,7 @@ export default class CacheMap extends Map {
 
   rememberAsync = async (key, value, expiresOn = this.#metadata?.get(key)?.isCacheStale ?? undefined) => {
 
+    // console.log(key, expiresOn)
 
     if (!expiresOn) {
       if (!this.has(key)) {
@@ -219,6 +224,7 @@ export default class CacheMap extends Map {
     handleExpiration: {
       this.#withMetadata()
 
+      // console.log('async', key)
       const stale = this.#isStale(key, value)
 
       if (stale) {
