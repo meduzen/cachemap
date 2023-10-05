@@ -95,7 +95,7 @@ describe('CacheMap.remember', () => {
     expect(pitch).toBe('Pitch')
   })
 
-  test('doesn’t run a sync handler (using remember) when setting expiration with a duration if the cached entry is not stale', async () => {
+  test('doesn’t run a sync handler (using remember) when setting expiration with a duration if the cache entry is not stale', async () => {
     let executionCount = 0
 
     const EXPIRE_AFTER_MS = 10

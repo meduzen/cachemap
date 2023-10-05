@@ -4,5 +4,5 @@
 
 /**
  * @typedef {Object} CacheMetadataEntry
- * @property {Function} isCacheStale Check if the cached entry is stale.
+ * @property {Function} isCacheStale Check if the cache entry is stale.
  */
