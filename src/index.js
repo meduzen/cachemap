@@ -45,7 +45,7 @@ export default class CacheMap extends Map {
    * also immediatly invalidate a stale entry.
    *
    * @param {*} key
-   * @param {number|Date|Function} expiresOn Duration after which, or moment after which, or callback function deciding if the cache entry should be refreshed.
+   * @param {number|Date} expiresOn Duration after which, or moment after which the cache entry should be refreshed.
    * @param {boolean} deleteIfStale When provided, invalidate the cache entry if stale.
    */
   setExpiration(key, expiresOn, deleteIfStale = true) {
@@ -53,7 +53,7 @@ export default class CacheMap extends Map {
 
     // For convenience, assume `expiresOn` is a function.
 
-    let isCacheStale = expiresOn
+    let isCacheStale = null
 
     // Turn a duration (number) into an expiration `Date`.
 
@@ -67,9 +67,11 @@ export default class CacheMap extends Map {
       isCacheStale = () => new Date() > expiresOn
     }
 
+    if (!isCacheStale) { return }
+
     this.#metadata.set(key, {
       isCacheStale,
-      isFunction: typeof expiresOn == 'function',
+      // isFunction: typeof expiresOn == 'function',
     })
 
     if (deleteIfStale && isCacheStale(this.get(key))) {
@@ -100,24 +102,24 @@ export default class CacheMap extends Map {
 
     // Retrieve expiration function and type of expiration.
 
-    const { isCacheStale, isFunction } = this.#metadata.get(key)
-    console.log(isCacheStale, isFunction)
+    // const { isCacheStale, isFunction } = this.#metadata.get(key)
+    const { isCacheStale } = this.#metadata.get(key)
 
-    if (typeof value == 'function' && isFunction) {
+    // if (typeof value == 'function' && isFunction) {
 
-      /**
-       * Edge case where both the value and the expiration are functions. It
-       * is not a recommended use of `CacheMap` but it’s still supported.
-       * In order to discourage such usage, another option could be to
-       * mark the value as stale anyway, but a warning is prefered.
-       */
-      console.warn('Both the value you are trying to cache and its expiration are functions. In that scenario, cachemap consider the cache entry as fresh. See [URL].')
-      console.warn('Both the value you are trying to cache and its expiration are functions, which would force @frontacles/cachemap to execute the “value function” because its returned value is passed down to the expiration function. This scenario is not recommended and can lead to performance issues. ')
+    //   /**
+    //    * Edge case where both the value and the expiration are functions. It
+    //    * is not a recommended use of `CacheMap` but it’s still supported.
+    //    * In order to discourage such usage, another option could be to
+    //    * mark the value as stale anyway, but a warning is prefered.
+    //    */
+    //   console.warn('Both the value you are trying to cache and its expiration are functions. In that scenario, cachemap consider the cache entry as fresh. See [URL].')
+    //   console.warn('Both the value you are trying to cache and its expiration are functions, which would force @frontacles/cachemap to execute the “value function” because its returned value is passed down to the expiration function. This scenario is not recommended and can lead to performance issues. ')
 
-      return false
+    //   return false
 
-      // value = value()
-    }
+    //   // value = value()
+    // }
 
     return isCacheStale(value, this.get(key))
   }
@@ -127,7 +129,7 @@ export default class CacheMap extends Map {
    *
    * @param {*} key
    * @param {*|function():*} value Value to cache or a function returning it.
-   * @param {(number|Date|Function)=} expiresOn Duration after which, or moment after which, or callback function deciding if the cache entry should be refreshed.
+   * @param {number|Date} expiresOn Duration after which, or moment after which the cache entry should be refreshed.
    * @returns {CacheMap}
    */
   add(key, value, expiresOn = this.#metadata?.get(key)?.isCacheStale ?? undefined) {
@@ -177,7 +179,7 @@ export default class CacheMap extends Map {
    *
    * @param {*} key
    * @param {*|function():*} value Value to cache or a function returning it.
-   * @param {(number|Date|Function)=} expiresOn Duration after which, or moment after which, or callback function deciding if the cache entry should be refreshed.
+   * @param {number|Date} expiresOn Duration after which, or moment after which the cache entry should be refreshed.
    * @returns {*} Returns the (computed) `value` parameter.
    */
   remember = (key, value, expiresOn = this.#metadata?.get(key)?.isCacheStale ?? undefined) =>
@@ -197,7 +199,7 @@ export default class CacheMap extends Map {
    *
    * @param {*} key
    * @param {*|function():(*|Promise)} value Value to cache or a (sync or async) function returning it.
-   * @param {(number|Date|Function)=} expiresOn Duration after which, or moment after which, or callback function deciding if the cache entry should be refreshed.
+   * @param {number|Date} expiresOn Duration after which, or moment after which the cache entry should be refreshed.
    * @returns {Promise} Returns a Promise resolving with the (computed) `value` parameter.
    */
   // rememberAsync = async (key, value, expiresOn = this.#metadata?.get(key)?.isCacheStale ?? undefined) =>

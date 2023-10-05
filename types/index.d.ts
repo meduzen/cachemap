@@ -21,19 +21,19 @@ export default class CacheMap extends Map<any, any> {
      * also immediatly invalidate a stale entry.
      *
      * @param {*} key
-     * @param {number|Date|Function} expiresOn Duration after which, or moment after which, or callback function deciding if the cache entry should be refreshed.
+     * @param {number|Date} expiresOn Duration after which, or moment after which the cache entry should be refreshed.
      * @param {boolean} deleteIfStale When provided, invalidate the cache entry if stale.
      */
-    setExpiration(key: any, expiresOn: number | Date | Function, deleteIfStale?: boolean): void;
+    setExpiration(key: any, expiresOn: number | Date, deleteIfStale?: boolean): void;
     /**
      * Adds a cache entry if the specified key is new in the cache.
      *
      * @param {*} key
      * @param {*|function():*} value Value to cache or a function returning it.
-     * @param {(number|Date|Function)=} expiresOn Duration after which, or moment after which, or callback function deciding if the cache entry should be refreshed.
+     * @param {number|Date} expiresOn Duration after which, or moment after which the cache entry should be refreshed.
      * @returns {CacheMap}
      */
-    add(key: any, value: any | (() => any), expiresOn?: (number | Date | Function) | undefined): CacheMap;
+    add(key: any, value: any | (() => any), expiresOn?: number | Date): CacheMap;
     /**
      * Get a cache entry and remove it from the cache.
      *
@@ -49,10 +49,10 @@ export default class CacheMap extends Map<any, any> {
      *
      * @param {*} key
      * @param {*|function():*} value Value to cache or a function returning it.
-     * @param {(number|Date|Function)=} expiresOn Duration after which, or moment after which, or callback function deciding if the cache entry should be refreshed.
+     * @param {number|Date} expiresOn Duration after which, or moment after which the cache entry should be refreshed.
      * @returns {*} Returns the (computed) `value` parameter.
      */
-    remember: (key: any, value: any | (() => any), expiresOn?: (number | Date | Function) | undefined) => any;
+    remember: (key: any, value: any | (() => any), expiresOn?: number | Date) => any;
     /**
      * Adds an expirable cache entry if the key is new in the cache, then returns the value.
      *
@@ -65,9 +65,9 @@ export default class CacheMap extends Map<any, any> {
      *
      * @param {*} key
      * @param {*|function():(*|Promise)} value Value to cache or a (sync or async) function returning it.
-     * @param {(number|Date|Function)=} expiresOn Duration after which, or moment after which, or callback function deciding if the cache entry should be refreshed.
+     * @param {number|Date} expiresOn Duration after which, or moment after which the cache entry should be refreshed.
      * @returns {Promise} Returns a Promise resolving with the (computed) `value` parameter.
      */
-    rememberAsync: (key: any, value: any | (() => (any | Promise<any>)), expiresOn?: (number | Date | Function) | undefined) => Promise<any>;
+    rememberAsync: (key: any, value: any | (() => (any | Promise<any>)), expiresOn?: number | Date) => Promise<any>;
     #private;
 }
