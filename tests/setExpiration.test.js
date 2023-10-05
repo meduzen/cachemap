@@ -131,3 +131,8 @@ describe('CacheMap.setExpiration', () => {
     expect(cache.get('three')).toBe(3)
   })
 })
+
+/**
+ * @todo: test the 3rd parameter of `CacheMap.setExpiration`
+ */
+describe.todo('CacheMap.setExpiration / deleteIfStale', () => { })
