@@ -38,7 +38,7 @@ describe('CacheMap.add', () => {
     expect(cache.get('three')).toBe(3)
   })
 
-  test.todo('sets expiration using add with a function (newVal)', async () => {
+  test('sets expiration using add with a function (newVal)', async () => {
     const isThree = newVal => newVal == 3
 
     cache.add('three', 1, isThree)
@@ -49,7 +49,7 @@ describe('CacheMap.add', () => {
     expect(cache.get('three')).toBe(3)
   })
 
-  test.todo('sets expiration using add with a function (newVal, oldVal)', async () => {
+  test('sets expiration using add with a function (newVal, oldVal)', async () => {
     const wasThree = (newVal, oldVal) => oldVal == 3
 
     cache.add('one', 1, wasThree)
@@ -137,7 +137,7 @@ describe('CacheMap.remember', () => {
     expect(pitch).toBe('Pitch')
   })
 
-  test.todo('sets expiration using remember with a function (newVal)', () => {
+  test('sets expiration using remember with a function (newVal)', () => {
     const invalidateIfPitch = newVal => newVal == 'Pitch'
 
     // Invalidate the cache if the cat name is 'Pitch'
@@ -153,7 +153,7 @@ describe('CacheMap.remember', () => {
     expect(choucroute).toBe('Pitch')
   })
 
-  test.todo('sets expiration using remember with a function (newVal, oldVal)', () => {
+  test('sets expiration using remember with a function (newVal, oldVal)', () => {
     const invalidateIfLongerName = (newVal, oldVal) => newVal.length > oldVal.length
 
     // Invalidate the cache if the name is longer
@@ -184,6 +184,7 @@ describe.todo('CacheMap.rememberAsync', () => {
     expect(Object.keys(cache.get('metadata'))).toContain('color')
   })
 })
+
 
 describe.todo('Expiration edge cases', () => {
   test('sets expiration using add (with a function) with a function (newVal, oldVal) is like not having expiration at all', () => {

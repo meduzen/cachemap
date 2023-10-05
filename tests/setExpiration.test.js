@@ -75,7 +75,7 @@ describe('CacheMap.setExpiration', () => {
     expect(cache.get('one')).toBe(4)
   })
 
-  test.todo('where expiration is a function set before setExpiration (newVal)', async () => {
+  test('where expiration is a function set before setExpiration (newVal)', async () => {
     const isOne = newVal => newVal == 1
     const isFour = newVal => newVal == 4
 
@@ -90,7 +90,7 @@ describe('CacheMap.setExpiration', () => {
     expect(cache.get('zero')).toBe(4)
   })
 
-  test.todo('where expiration is a function set by setExpiration (newVal)', async () => {
+  test('where expiration is a function set by setExpiration (newVal)', async () => {
     const isOne = value => value == 1
 
     cache.add('one', 1)
@@ -102,7 +102,7 @@ describe('CacheMap.setExpiration', () => {
     expect(cache.get('one')).toBe(3)
   })
 
-  test.todo('where expiration is a function set before setExpiration (newVal, oldVal)', async () => {
+  test('where expiration is a function set before setExpiration (newVal, oldVal)', async () => {
     const wasThree = (newVal, oldVal) => oldVal == 3
     const wasFour = (newVal, oldVal) => oldVal == 4
 
@@ -118,7 +118,7 @@ describe('CacheMap.setExpiration', () => {
     expect(cache.get('three')).toBe(5)
   })
 
-  test.todo('where expiration is a function set by setExpiration (newVal, oldVal)', async () => {
+  test('where expiration is a function set by setExpiration (newVal, oldVal)', async () => {
     const wasOne = (newVal, oldVal) => oldVal == 1
 
     cache.add('three', 1)
