@@ -8,7 +8,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 [`CacheMap.pull`](./README.md#cachemappull) retrieves a cache entry and removes it from the cache.
 
-A cache entry can expire when a condition is passed to any caching methods, as an expiration `Date` or a duration `Integer` (in milliseconds). In addition to this, other interaction with expiration mechanisms are possible:
+A cache entry can expire when a condition is passed to any caching methods, as an expiration `Date` or a duration `Integer` (in milliseconds). In addition to this, you can interact with expiration mechanisms using:
 - [`CacheMap.clearMetadata`](./README.md#cachemapclearmetadata) removes expiration mechanisms;
 - [`CacheMap.setExpiration`](./README.md#cachemapsetexpiration) defines or overwrites expiration mechanisms without the need to apply a caching method like `CacheMap.add` or `CacheMap.remember`.
 
