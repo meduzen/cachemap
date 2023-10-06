@@ -1,4 +1,4 @@
-# `CacheMap`
+# `CacheMap` 
 
 The `CacheMap` class extends the `Map` object to use it as a key-value cache.
 
