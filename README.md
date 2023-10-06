@@ -41,7 +41,7 @@ With or without expiration conditions, you can still **touch cache entries** usi
 
 ## Usage overview
 
-> [!INFORMATION] \
+> [!NOTE]  
 > You can consider this overview as a _cheat sheet_.
 
 **Create a cache** by instantiating `CacheMap` like you would [instantiate a `Map`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/Map#parameters):
@@ -179,7 +179,7 @@ cache.remember('money you owe me', () => sum(bills))
 // CacheMap(1) [Map] { 'money you owe me' => 56.32 }
 ```
 
-> [!NOTE] \
+> [!NOTE]  
 > On the second usage of `cache.remember`, the function doesn’t run at all: as the key already exists in the cache, its value is immediatly returned.
 
 ### `CacheMap.rememberAsync`
@@ -219,7 +219,7 @@ cache.setExpiration('invincibility', 50000)
 cache.setExpiration('warranty', new Date(2026, 6, 17))
 ```
 
-> [!WARNING] \
+> [!INFORMATION]  
 > If the new expiration condition makes the entry stale (e.g. the expiration is in the past), it is removed from the cache.
 
 ### `CacheMap.clearMetadata`
