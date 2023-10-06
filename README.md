@@ -219,7 +219,7 @@ cache.setExpiration('invincibility', 50000)
 cache.setExpiration('warranty', new Date(2026, 6, 17))
 ```
 
-> [!INFORMATION]  
+> [!IMPORTANT]  
 > If the new expiration condition makes the entry stale (e.g. the expiration is in the past), it is removed from the cache.
 
 ### `CacheMap.clearMetadata`
