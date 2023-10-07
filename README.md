@@ -28,7 +28,7 @@ Not using a package manager? Download [the package archive](https://github.com/m
 
 ## The `CacheMap` class
 
-The `CacheMap` class extends the [`Map`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map) object with methods to cache values and control the cache lifetime.
+The `CacheMap` class extends the [`Map`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map) object with methods that cache values and control their lifetime.
 
 By default, `CacheMap` methods create **new entries** in the cache: if a key already exists in the cache, the caching methods won’t change its value, unless an _expiration condition_ is attached to that key.
 
@@ -129,7 +129,7 @@ cache.clearMetadata()
 
 ### `CacheMap.add`
 
-`CacheMap.add` adds a new cache entry, and returns the cache, allowing fluent usage (methods chaining).
+`CacheMap.add` creates a new cache entry, and returns the cache instance, allowing fluent usage (methods chaining).
 
 ```js
 const nextFullMoonInBrussels = new Date(Date.parse('2023-08-31T03:35:00+02:00'))
@@ -138,9 +138,9 @@ const DAYS_IN_MS = 1000 * 60 * 60 * 24
 const daysBeforeFullMoon = () => (nextFullMoonInBrussels - new Date()) / DAYS_IN_MS
 
 cache
-  .add('cloud conditions', 'hopefully decent')
   .add('next full moon', nextFullMoonInBrussels) // cache a `Date`
-  .add('days to wait', daysBeforeFullMoon) // cache the function returned value
+  .add('cloud conditions', 'hopefully decent') // cache a string
+  .add('days to wait', daysBeforeFullMoon) // run the function and cache its returned value
   .add('next full moon', 'yesterday') // won’t be changed: key already exists!
 
 // CacheMap(3) [Map] {
