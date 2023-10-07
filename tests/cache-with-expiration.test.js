@@ -22,6 +22,52 @@ describe('CacheMap.add', () => {
     expect(cache.get('three')).toBe(3)
   })
 
+  test('expires twice in a row with a duration', async () => {
+    const EXPIRE_AFTER_MS = 10
+
+    cache.add('one', 1, EXPIRE_AFTER_MS)
+    cache.add('one', 2, EXPIRE_AFTER_MS)
+
+    expect(cache.get('one')).toBe(1)
+
+    await setTimeout(EXPIRE_AFTER_MS + 5) // wait 5ms after the expiration
+
+    cache.add('one', 3, EXPIRE_AFTER_MS)
+
+    expect(cache.get('one')).toBe(3)
+
+    await setTimeout(EXPIRE_AFTER_MS + 5) // wait 5ms after the expiration
+
+    cache.add('one', 4, EXPIRE_AFTER_MS)
+    cache.add('one', 5, EXPIRE_AFTER_MS)
+
+    expect(cache.get('one')).toBe(4)
+  })
+
+  // maybe this test should be renamed “preserve expuration duration on expiration“
+  test('expires twice in a row with a duration without the need to pass the duration as 3rd parameter', async () => {
+
+    const EXPIRE_AFTER_MS = 10
+
+    cache.add('one', 1, EXPIRE_AFTER_MS)
+    cache.add('one', 2)
+
+    expect(cache.get('one')).toBe(1)
+
+    await setTimeout(EXPIRE_AFTER_MS + 5) // wait 5ms after the expiration
+
+    cache.add('one', 3)
+
+    expect(cache.get('one')).toBe(3)
+
+    await setTimeout(EXPIRE_AFTER_MS + 5) // wait 5ms after the expiration
+
+    cache.add('one', 4)
+    cache.add('one', 5)
+
+    expect(cache.get('one')).toBe(4)
+  })
+
   test('sets expiration using add with a Date', async () => {
     const EXPIRE_AFTER_MS = 10
     const EXPIRATION_DATE = new Date(new Date().getTime() + EXPIRE_AFTER_MS)

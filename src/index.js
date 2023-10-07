@@ -137,6 +137,12 @@ export default class CacheMap extends Map {
     const stale = this.#isStale(key, value)
 
     if (stale) {
+      /**
+       * @todo Once deleted, set the expiration again if metadata already exists:
+       * - for a Date: remove the metadata key
+       * - for a duration: reset the timer
+       * - for a function: keep the function
+       */
       this.delete(key)
     }
 
