@@ -50,6 +50,7 @@ export default class CacheMap extends Map {
    */
   setExpiration(key, expiresOn, deleteIfStale = true) {
     this.#withMetadata()
+    let rawExpiration = expiresOn
 
     // For convenience, assume `expiresOn` is a function.
 
@@ -69,9 +70,13 @@ export default class CacheMap extends Map {
 
     if (!isCacheStale) { return }
 
+    // let isFunction = typeof expiresOn == 'function'
+
     this.#metadata.set(key, {
       isCacheStale,
-      // isFunction: typeof expiresOn == 'function',
+      // isFunction,
+      // ...(isFunction ? null : { rawExpiration }),
+      ...(typeof expiresOn == 'function' ? null : { rawExpiration }),
     })
 
     if (deleteIfStale && isCacheStale(this.get(key))) {
@@ -137,13 +142,27 @@ export default class CacheMap extends Map {
     const stale = this.#isStale(key, value)
 
     if (stale) {
+      this.delete(key)
+
       /**
-       * @todo Once deleted, set the expiration again if metadata already exists:
-       * - for a Date: remove the metadata key
+       * The key now deleted, update the expiration function:
+       * - for a Date (which in the past, as it’s stale): remove the metadata
        * - for a duration: reset the timer
        * - for a function: keep the function
        */
-      this.delete(key)
+      if (this.#metadata?.has(key)) {
+        const { rawExpiration } = this.#metadata.get(key)
+
+        // expiration date in the past, metadata no more needed
+        if (rawExpiration instanceof Date) {
+          return this.clearMetadata(key)
+        }
+
+        // will reset the timer
+        if (typeof rawExpiration == 'number') {
+          expiresOn = rawExpiration
+        }
+      }
     }
 
     if (stale || !this.#metadata?.has(key)) {

@@ -1,4 +1,3 @@
-/** @type {import('./types')} */
 /**
  * An extension of Map to use it as a cache.
  */
