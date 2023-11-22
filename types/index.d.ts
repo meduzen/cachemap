@@ -7,18 +7,37 @@ export default class CacheMap extends Map<any, any> {
     constructor();
     constructor(iterable?: Iterable<readonly [any, any]>);
     /**
+     * Clear all metadata, or only the one for the provided key.
+     *
+     * @param {any} key When provided, only clear the metadata for that key.
+     * @returns {void|null}
+     */
+    clearMetadata(key?: any): void | null;
+    /**
+     * Create and cache the function that checks if the cache entry is fresh.
+     *
+     * When it runs to update the expiration function, `setExpiration` can
+     * also immediatly invalidate a stale entry.
+     *
+     * @param {*} key
+     * @param {number|Date} expiresOn Duration after which, or moment after which the cache entry should be refreshed.
+     * @param {boolean} deleteIfStale When provided, invalidate the cache entry if stale.
+     */
+    setExpiration(key: any, expiresOn: number | Date, deleteIfStale?: boolean): void;
+    /**
      * Adds a cache entry if the specified key is new in the cache.
      *
      * @param {*} key
-     * @param {*} value
+     * @param {*|function():*} value Value to cache or a function returning it.
+     * @param {number|Date} expiresOn Duration after which, or moment after which the cache entry should be refreshed.
      * @returns {CacheMap}
      */
-    add: (key: any, value: any) => CacheMap;
+    add(key: any, value: any | (() => any), expiresOn?: number | Date): CacheMap;
     /**
-     * Get a cached item and remove it from the cache.
+     * Get a cache entry and remove it from the cache.
      *
      * @param {*} key
-     * @returns {*} Returns the found item, or undefined if not found.
+     * @returns {*} Returns the entry value, or undefined if not found.
      */
     pull: (key: any) => any;
     /**
@@ -29,11 +48,12 @@ export default class CacheMap extends Map<any, any> {
      *
      * @param {*} key
      * @param {*|function():*} value Value to cache or a function returning it.
+     * @param {number|Date} expiresOn Duration after which, or moment after which the cache entry should be refreshed.
      * @returns {*} Returns the (computed) `value` parameter.
      */
-    remember: (key: any, value: any | (() => any)) => any;
+    remember: (key: any, value: any | (() => any), expiresOn?: number | Date) => any;
     /**
-     * Adds a cache entry if the key is new in the cache, then returns the value.
+     * Adds an expirable cache entry if the key is new in the cache, then returns the value.
      *
      * The provided `value` can be:
      * - **any primitive** (string, number, boolean, array, object…);
@@ -44,7 +64,9 @@ export default class CacheMap extends Map<any, any> {
      *
      * @param {*} key
      * @param {*|function():(*|Promise)} value Value to cache or a (sync or async) function returning it.
+     * @param {number|Date} expiresOn Duration after which, or moment after which the cache entry should be refreshed.
      * @returns {Promise} Returns a Promise resolving with the (computed) `value` parameter.
      */
-    rememberAsync: (key: any, value: any | (() => (any | Promise<any>))) => Promise<any>;
+    rememberAsync: (key: any, value: any | (() => (any | Promise<any>)), expiresOn?: number | Date) => Promise<any>;
+    #private;
 }

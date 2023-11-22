@@ -6,12 +6,23 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### New
 
-- `CacheMap.pull` allows you to retrieve an item from the cache and remove it from the cache.
+[`CacheMap.pull`](./README.md#cachemappull) retrieves a cache entry and removes it from the cache.
+
+A cache entry can expire when a condition is passed to any caching methods, as an expiration `Date` or a duration `Integer` (in milliseconds). In addition to this, you can interact with expiration mechanisms using:
+- [`CacheMap.clearMetadata`](./README.md#cachemapclearmetadata) removes expiration mechanisms;
+- [`CacheMap.setExpiration`](./README.md#cachemapsetexpiration) defines or overwrites expiration mechanisms without the need to apply a caching method like `CacheMap.add` or `CacheMap.remember`.
+
+### Documentation
+
+Rework many areas.
 
 ### Under the hood
 
-- Types: fix key parameter restricted to strings in Cachemap methods.
-- Test types in CI pipeline.
+- Fix the type of the _key_ parameter restricted to strings in Cachemap methods.
+- Test `CacheMap` inheritance of `Map`.
+- Test types when a pull request is open.
+- Check package size when a pull request is open.
+- Group dependencies updates done by _dependabot_ in one pull request.
 
 Compare with [last published version](https://github.com/meduzen/cachemap/compare/v1.0.0-0...main).
 

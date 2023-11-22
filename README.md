@@ -1,74 +1,76 @@
 # `CacheMap`
 
-The `CacheMap` class extends the `Map` object to use it as a key-value cache.
+`CacheMap` is a key-value cache built upon [`Map`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map).
 
-It shines in situations when you want to cache derived state (values computed from others) or that are the result of async operations (e.g. `fetch`).
+It has expiration mechanisms and can directly cache any value, derived state (values _computed_ from others, like in [Vue `computed` properties](https://vuejs.org/guide/essentials/computed.html#computed-caching-vs-methods) and [React `useMemo`](https://react.dev/reference/react/useMemo)) or the result of asynchronous operations (e.g. [`fetch`](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch)).
+
+It’s mostly inspired by [Laravel `Cache::remember`](https://laravel.com/docs/10.x/cache#retrieve-store).
 
 [![Node.js CI](https://github.com/meduzen/cachemap/actions/workflows/node.js.yml/badge.svg)](https://github.com/meduzen/cachemap/actions/workflows/node.js.yml)
 
-The package is lightweight ([157 bytes compressed](https://bundlejs.com/?q=@frontacles/cachemap&bundle), not tree-shakeable (it’s a class!), typed and tested.
-
-It’s mostly inspired by how [Laravel `Cache::remember`](https://laravel.com/docs/10.x/cache#retrieve-store) works.
+The package is lightweight ([157 bytes compressed](https://bundlejs.com/?q=@frontacles/cachemap&bundle)), not tree-shakeable (it’s a class!), typed and tested.
 
 ## Installation
 
-Install the package:
+Install the package in a project by using this command your terminal:
 
 ```sh
 npm install @frontacles/cachemap
 ```
 
-Import the class in your script:
+Import the `CacheMap` class in your script:
 
 ```js
 import CacheMap from '@frontacles/cachemap'
 ```
 
-Not using a package manager? Download [the package files](https://github.com/meduzen/cachemap/releases) in your project and take the files in `/src`.
+Not using a package manager? Download [the package archive](https://github.com/meduzen/cachemap/releases) and import `CacheMap` from its `/src` folder.
 
 ## The `CacheMap` class
 
-`CacheMap` brings some methods that can all cache values.
+The `CacheMap` class extends the [`Map`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map) object with methods that cache values and control their lifetime.
 
-The methods specific to `CacheMap` are all designed to create a **new item** in the cache: if the key already exists, the cache item won’t be touched.
+By default, `CacheMap` methods create **new entries** in the cache: if a key already exists in the cache, the caching methods won’t change its value, unless an _expiration condition_ is attached to that key.
 
-If you want to **touch a cached item**, you can use the regular `Map` methods, all available in `CacheMap`, all inherited from `Map`:
+An **expiration condition** can be attached to a cache entry at any time. When the condition is met, the cached value can change. An expiration condition is either an `Integer` duration (in milliseconds) either a `Date` object.
+
+With or without expiration conditions, you can still **touch cache entries** using `Map` native methods as they are inherited without changes:
 - clear the cache with [`CacheMap.clear`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/clear);
-- delete an item from the cache with [`CacheMap.delete`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/delete);
-- update the value of a cached item with [`CacheMap.set`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/set).
+- delete an entry from the cache with [`CacheMap.delete`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/delete);
+- add or update the value of a cache entry with [`CacheMap.set`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/set).
 
-### Overview
+## Usage overview
 
-Create a cache (or many caches):
+> [!NOTE]  
+> You can consider this overview as a _cheat sheet_.
+
+**Create a cache** by instantiating `CacheMap` like you would [instantiate a `Map`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/Map#parameters):
 
 ```js
 import CacheMap from '@frontacles/cachemap'
 
-const cache = new CacheMap() // no parameter creates an empty cache
+const exampleCache = new CacheMap() // no parameter creates an empty cache
 
-const SuperMarioBros3Cache = new CacheMap([ // init with array of ['key', value]
-  ['key', 'value'],
+const cache = new CacheMap([ // init with array of ['key', value]
   ['country', 'Mushroom Kingdom'],
   ['hierarchy', {
     boss: 'Bowser',
     chiefs: ['Lemmy', 'Iggy', 'Morton', 'Larry', 'Ludwig', 'Wendy', 'Roy'],
-    randos: ['Goomba', 'Koopa Troopa', 'Cheep cheep', 'Pirhana Plant']
+    randos: ['Goomba', 'Koopa Troopa', 'Cheep cheep', 'Pirhana Plant'],
   }],
 ])
 ```
 
-**Add new items** in the cache using [`CacheMap.add`](#cachemapadd):
+**Add a new entry** to the cache using [`CacheMap.add`](#cachemapadd):
 
 ```js
-const cache = SuperMarioBros3Cache // rename our SMB3 cache, for convenience
-
 cache
   .add('plumbers', ['Mario', 'Luigi']) // returns `cache`, allowing chaining
   .add('tiny assistant', 'Toad')
-  // .clear() // uncomment this line to kill everyone
+  // .clear() // uncomment this line to clear the cache (and kill everyone)
 ```
 
-**Cache and forget** using [`CacheMap.pull`](#cachemappull):
+**Forget and return** a value using [`CacheMap.pull`](#cachemappull):
 
 ```js
 let assistant = cache.pull('tiny assistant') // 'Toad'
@@ -77,7 +79,7 @@ cache.has('tiny assistant') // false
 cache.pull('tiny assistant') // undefined
 ```
 
-**Cache and return** using [`CacheMap.remember`](#cachemapremember):
+**Cache and return** a value using [`CacheMap.remember`](#cachemapremember):
 
 ```js
 let lastLevel = cache.remember('last visited level', '1-3') // 1-3
@@ -96,46 +98,72 @@ cache.remember('bonus', () => randomFrom(['Mushroom', 'Fire flower', 'Star']))
 const tinyHouse = await cache.rememberAsync('tiny house', prepareTinyHouse)
 
 async function prepareTinyHouse() {
-  return computeChestContent().then(chest => chest.toByteBuffer())
+  return computeTreasureChest().then(chest => chest.toByteBuffer())
 }
 ```
 
-### `CacheMap.add`
-
-`CacheMap.add` updates the cache if the key is new, and returns its `CacheMap` instance, allowing fluent usage (methods chaining).
+**Set cache expiration** with a third parameter or with `setExpiration`:
 
 ```js
-import CacheMap from '@frontacles/cachemap'
-const cache = new CacheMap()
+// Duration: cache `true` during 10 ms.
+cache.add('invincibility', true, 10)
 
+// Expiration date: cache `true` until November 21, 1990.
+cache.remember('best platformer', true, new Date(1990, 10, 21))
+
+// Force a new expiration duration for `invincibility` to 20 ms.
+cache.setExpiration('invincibility', 20)
+```
+
+**Remove the expiration mechanism** with `clearMetadata`
+
+```js
+// Remove the expiration mechanism of a given cache entry.
+cache.clearMetadata('invincibility') // `invincibility` can’t expire anymore
+
+// Remove the expiration mechanism of all cache entries.
+cache.clearMetadata()
+```
+
+## API
+
+### `CacheMap.add`
+
+`CacheMap.add` creates a new cache entry, and returns the cache instance, allowing fluent usage (methods chaining).
+
+```js
 const nextFullMoonInBrussels = new Date(Date.parse('2023-08-31T03:35:00+02:00'))
 
-cache
-  .add('next full moon', nextFullMoonInBrussels)
-  .add('cloud conditions', 'hopefully decent')
-  .add('next full moon', 'yesterday') // won’t be changed, key already exists!
+const DAYS_IN_MS = 1000 * 60 * 60 * 24
+const daysBeforeFullMoon = () => (nextFullMoonInBrussels - new Date()) / DAYS_IN_MS
 
-// CacheMap(2) [Map] {
+cache
+  .add('next full moon', nextFullMoonInBrussels) // cache a `Date`
+  .add('cloud conditions', 'hopefully decent') // cache a string
+  .add('days to wait', daysBeforeFullMoon) // run the function and cache its returned value
+  .add('next full moon', 'yesterday') // won’t be changed: key already exists!
+
+// CacheMap(3) [Map] {
 //   'next full moon' => 2023-08-13T14:04:51.876Z,
 //   'cloud conditions' => 'hopefully decent'
+//   'days to wait' => 14.123456
 // }
 ```
 
 ### `CacheMap.pull`
 
-`CacheMap.pull` retrieves an item from the cache and then delete the item. If the item is not found, it returns `undefined`.
+`CacheMap.pull` retrieves an entry and deletes it from the cache. If the entry is not found, `undefined` is returned.
 
 ```js
-cache.add('draft article', 'Lorem drafting ipsum all the things')
-
 const draft = cache.pull('draft article')
+
+cache.has('draft article') // false
+cache.pull('draft article') // undefined
 ```
 
 ### `CacheMap.remember`
 
-`CacheMap.remember` adds caches a value to the cache, and returns it. It takes a primitive value or a callback function returning the value that is then stored in the cache.
-
-Like [`CacheMap.add`](#cachemapadd), it only updates the cache if the key is new. The returned value is always the cached one.
+`CacheMap.remember` adds an entry to the cache, and returns it. It’s exactly like [`CacheMap.add`](#cachemapadd), with the difference that it returns the cached value instead of the `CacheMap` instance.
 
 ```js
 const bills = [13.52, 17, 4.20, 21.6]
@@ -151,7 +179,8 @@ cache.remember('money you owe me', () => sum(bills))
 // CacheMap(1) [Map] { 'money you owe me' => 56.32 }
 ```
 
-On the second usage of `cache.remember` in the previous example, the function doesn’t run at all: as the key already exists in the cache, its value is immediatly returned.
+> [!NOTE]  
+> On the second usage of `cache.remember`, the function doesn’t run at all: as the key already exists in the cache, its value is immediatly returned.
 
 ### `CacheMap.rememberAsync`
 
@@ -178,6 +207,33 @@ cache.rememberAsync('rainy or not', 'you can hide').then(console.log) // 'you ca
 // }
 ```
 
+### `CacheMap.setExpiration`
+
+`CacheMap.setExpiration` adds or changes the expiration of a cache entry on the fly. An expiration can be set using either an `Integer` duration (in milliseconds) either a `Date` object.
+
+```js
+// Enjoy invincibility during 5 seconds!
+cache.setExpiration('invincibility', 50000)
+
+// Warranty valid until June 2026.
+cache.setExpiration('warranty', new Date(2026, 6, 17))
+```
+
+> [!IMPORTANT]  
+> If the new expiration condition makes the entry stale (e.g. the expiration is in the past), it is removed from the cache.
+
+### `CacheMap.clearMetadata`
+
+`CacheMap.clearMetadata` removes the expiration mechanism for all cache entries, or only for a given key if provided as parameter.
+
+```js
+// Invincibility can’t expire anymore!
+cache.clearMetadata('invincibility')
+
+// No more expiration for all keys.
+cache.clearMetadata()
+```
+
 ## Better derived states with `remember`
 
 [Getters](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/get) are very convenient features available in objects and classes, allowing to compute a derived value from another simply by calling a property, instead of having to manually update it with a function:
@@ -194,7 +250,7 @@ const obj = {
 console.log(obj.latest) // 'c'
 ```
 
-Without getters, we would have need a manual operation:
+Without getters, we would have a manual operation:
 
 ```js
 const obj = {
@@ -302,14 +358,8 @@ scores.clear() // [Map Iterator] {  }
 
 ## Ideas
 
-(@todo: move this to issues)
-
-- Cache with expiration.
-- Cache until a condition is met (could be merged with previous: expiration).
-- IndexedDB save/load (IndexedDB is the only reliable browser storage that [can store `Map` objects](because it’s compatible with `Map` objects: https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm#javascript_types)).
-- LRU (last recently used) to delete oldest created or oldest accessed items when the cache size reaches a given limit.
-- Evaluate the need/benefits to use `WeakMap`.
-- Enrich map with convenient functions like `deleteMany`. It could be part of another class extending the base `CacheMap`. We could name it `SuperCacheMap` or `RichCacheMap` or something like this.
+- See [issues](https://github.com/meduzen/cachemap/issues?q=is%3Aissue+is%3Aopen+label%3Aenhancement).
+- Enrich map with convenient functions like `deleteMany`. If it significantly increase the library size, it could be part of another class extending the base `CacheMap` (and naming it like `SuperCacheMap` or `RichCacheMap` or something like this).
 
 ## Changelog
 
@@ -318,9 +368,8 @@ See [CHANGELOG.md](https://github.com/meduzen/@frontacles/cachemap/blob/main/CHA
 ## Browser and tooling support
 
 `@frontacles/cachemap` is provided [as module](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules#browser_compatibility) for [modern browsers usage](https://github.com/meduzen/@frontacles/cachemap/blob/main/browserslist) with standard JavaScript syntax:
-- it is up to you to transpile it for legacy browsers;
 - you can’t import it using `require('@frontacles/cachemap')`;
-@todo: CHECK FOR cachemap - if you don’t transpile it, `DateTime` requires support for [`class` fields](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/Public_class_fields#browser_compatibility) (Safari 14.0) starting `v1.32.0`.
+- unless you transpile it, `@frontacles/cachemap` works in environment supporting [private `class` fields](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/Private_class_fields#browser_compatibility) (e.g. Firefox 90, Safari 14.1, Safari iOS 14.5).
 
 [Read more about ESModules](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c).
 
