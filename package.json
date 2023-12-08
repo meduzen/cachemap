@@ -8,7 +8,7 @@
   "main": "./src/index.js",
   "exports": "./src/index.js",
   "engines": {
-    "node": ">=12.8"
+    "node": ">=18.0"
   },
   "scripts": {
     "types": "tsc",
@@ -30,17 +30,9 @@
       "brotli": true
     }
   ],
-  "files": [
-    "CHANGELOG.md",
-    "src/**/*.js",
-    "types/**/*.d.ts"
-  ],
+  "files": ["CHANGELOG.md", "src/**/*.js", "types/**/*.d.ts"],
   "types": "./types/index.d.ts",
-  "keywords": [
-    "cache",
-    "map",
-    "remember"
-  ],
+  "keywords": ["cache", "map", "remember"],
   "homepage": "https://github.com/meduzen/cachemap",
   "author": "Mehdi Merah",
   "license": "WTFPL",
@@ -56,13 +48,13 @@
     "@babel/plugin-proposal-private-methods": "^7.14.5",
     "@babel/preset-env": "^7.23",
     "@size-limit/preset-small-lib": "^11.0.0",
-    "@vitest/coverage-v8": "^0.34.6",
-    "@vitest/ui": "^0.34.6",
+    "@vitest/coverage-v8": "^1.0",
+    "@vitest/ui": "^1.0",
     "eslint": "^8.54.0",
     "size-limit": "^11.0.0",
     "tsd": "^0.29",
     "typescript": "^5.3.2",
-    "vitest": "^0.34.6"
+    "vitest": "^1.0"
   },
   "overrides": {
     "has": "npm:@nolyfill/has@latest"
