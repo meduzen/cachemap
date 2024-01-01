@@ -48,13 +48,13 @@
     "@babel/plugin-proposal-private-methods": "^7.14.5",
     "@babel/preset-env": "^7.23",
     "@size-limit/preset-small-lib": "^11.0.0",
-    "@vitest/coverage-v8": "^1.0",
-    "@vitest/ui": "^1.0",
-    "eslint": "^8.54.0",
+    "@vitest/coverage-v8": "^1.1",
+    "@vitest/ui": "^1.1",
+    "eslint": "^8.56.0",
     "size-limit": "^11.0.0",
-    "tsd": "^0.29",
+    "tsd": "^0.30",
     "typescript": "^5.3.2",
-    "vitest": "^1.0"
+    "vitest": "^1.1"
   },
   "overrides": {
     "has": "npm:@nolyfill/has@latest"
