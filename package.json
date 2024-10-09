@@ -44,17 +44,17 @@
     "access": "public"
   },
   "devDependencies": {
-    "@babel/eslint-parser": "^7.24.1",
+    "@babel/eslint-parser": "^7.25.7",
     "@babel/plugin-proposal-private-methods": "^7.14.5",
-    "@babel/preset-env": "^7.24",
-    "@size-limit/preset-small-lib": "^11.1.2",
-    "@vitest/coverage-v8": "^1.4",
-    "@vitest/ui": "^1.2",
-    "eslint": "^8.57.0",
+    "@babel/preset-env": "^7.25",
+    "@size-limit/preset-small-lib": "^11.1.6",
+    "@vitest/coverage-v8": "^2.1",
+    "@vitest/ui": "^2.1",
+    "eslint": "^9.12.0",
     "size-limit": "^11.0.0",
     "tsd": "^0.31",
-    "typescript": "^5.4.3",
-    "vitest": "^1.2"
+    "typescript": "^5.6.3",
+    "vitest": "^2.1"
   },
   "overrides": {
     "has": "npm:@nolyfill/has@latest"
