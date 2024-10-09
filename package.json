@@ -19,8 +19,8 @@
     "watch": "vitest watch",
     "build": "echo \"Nothing to build, this command is only here to please size-limit GitHub action\" && exit 0",
     "size": "size-limit",
-    "lint": "npm exec eslint src tests",
-    "lint-fix": "npm exec eslint src tests --fix",
+    "lint": "npm exec eslint",
+    "lint-fix": "npm exec eslint --fix",
     "nolyfill": "npm exec nolyfill",
     "nolyfill-install": "npm exec nolyfill install"
   },
@@ -30,9 +30,17 @@
       "brotli": true
     }
   ],
-  "files": ["CHANGELOG.md", "src/**/*.js", "types/**/*.d.ts"],
+  "files": [
+    "CHANGELOG.md",
+    "src/**/*.js",
+    "types/**/*.d.ts"
+  ],
   "types": "./types/index.d.ts",
-  "keywords": ["cache", "map", "remember"],
+  "keywords": [
+    "cache",
+    "map",
+    "remember"
+  ],
   "homepage": "https://github.com/meduzen/cachemap",
   "author": "Mehdi Merah",
   "license": "WTFPL",
@@ -47,16 +55,20 @@
     "@babel/eslint-parser": "^7.25.7",
     "@babel/plugin-proposal-private-methods": "^7.14.5",
     "@babel/preset-env": "^7.25",
+    "@eslint/js": "^9.12.0",
     "@size-limit/preset-small-lib": "^11.1.6",
     "@vitest/coverage-v8": "^2.1",
+    "@vitest/eslint-plugin": "^1.1.7",
     "@vitest/ui": "^2.1",
     "eslint": "^9.12.0",
     "size-limit": "^11.0.0",
     "tsd": "^0.31",
     "typescript": "^5.6.3",
+    "typescript-eslint": "^8.8.1",
     "vitest": "^2.1"
   },
   "overrides": {
-    "has": "npm:@nolyfill/has@latest"
+    "has": "npm:@nolyfill/has@^1",
+    "is-core-module": "npm:@nolyfill/is-core-module@^1"
   }
 }
