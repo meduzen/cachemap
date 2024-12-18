@@ -31,25 +31,38 @@ describe('2. CacheMap follows Map constructor signature', () => {
 
   test('instantiates CacheMap with parameters', () => {
     const sixtyFour = { sixtyFour: 64 } // object used as a map key
+    const getThing = param => param // function used as a map key
 
     const cacheMap = new CacheMap([
       ['a', 1],
       ['b', 2],
-      [sixtyFour, 'Nintendo sixty-fooooouuuuur!']
+      [sixtyFour, 'Nintendo sixty-fooooouuuuur!'],
+      [getThing, 'PamPamParam'],
     ])
 
     const map = new Map([
       ['a', 1],
       ['b', 2],
-      [sixtyFour, 'Nintendo sixty-fooooouuuuur!']
+      [sixtyFour, 'Nintendo sixty-fooooouuuuur!'],
+      [getThing, 'PamPamParam'],
     ])
 
-    expect(cacheMap.size).toBe(3)
-    expect(map.size).toBe(3)
+    const cacheMapCeption = new CacheMap(cacheMap)
+    const cacheMapFromMap = new CacheMap(map)
+
+    expect(cacheMap.size).toBe(4)
+    expect(map.size).toBe(4)
+    expect(cacheMapCeption.size).toBe(4)
+    expect(cacheMapFromMap.size).toBe(4)
 
     expect(cacheMap.get('a')).toBe(map.get('a'))
     expect(cacheMap.get('b')).toBe(map.get('b'))
     expect(cacheMap.get(sixtyFour)).toBe(map.get(sixtyFour))
+    expect(cacheMap.get(getThing)).toBe(map.get(getThing))
+    expect(cacheMapCeption.get('a')).toBe(map.get('a'))
+    expect(cacheMapCeption.get('a')).toBe(cacheMapFromMap.get('a'))
+    expect(cacheMapFromMap.get('a')).toBe(cacheMap.get('a'))
+    expect(cacheMapFromMap.get('a')).toBe(map.get('a'))
   })
 })
 
