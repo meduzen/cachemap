@@ -6,7 +6,8 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### New
 
-- `CacheMap.pull` allows you to retrieve an item from the cache and remove it from the cache.
+- The cache can expire when a condition is passed as callback function, an expiration `Date` or an integer (duration in milliseconds) to any caching methods.
+- `CacheMap.pull` allows you to retrieve a cache entry and remove it from the cache.
 
 ### Under the hood
 
